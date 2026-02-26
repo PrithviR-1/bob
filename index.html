@@ -93,8 +93,8 @@
         
         .moon-system {
             position: absolute;
-            top: 9%;
-            left: 52%;
+            top: 3%;
+            left: 50%;
             width: 116px;
             height: 116px;
             transform: translate(-50%, -140vh);
@@ -550,7 +550,7 @@
         #progress-fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #34c759, #32e0c4, #30d158);
+            background: #30d158;
             border-radius: 20px;
             transition: width 1.2s cubic-bezier(0.65, 0, 0.35, 1);
             box-shadow: 0 0 25px rgba(52, 199, 89, 0.5);
@@ -639,11 +639,11 @@
             font-size: 24px;
             color: var(--text-secondary);
             transition: all 0.4s ease;
-            font-weight: 600;
+            font-weight: 400;
         }
         .wheel div.active { 
             color: var(--accent-blue); 
-            font-weight: 900; 
+            font-weight: 600; 
             transform: scale(1.4); 
         }
 
@@ -1037,7 +1037,7 @@
             .sun-glow { width: 152px; height: 152px; }
             .sun-lightcast { width: 260px; height: 260px; }
             .bird { width: 18px; height: 11px; }
-            .moon-system { width: 100px; height: 100px; top: 10%; left: 53%; }
+            .moon-system { width: 100px; height: 100px; top: 4%; left: 50%; }
             .moon-body { width: 64px; height: 64px; }
             .moon-shadow { width: 64px; height: 64px; }
         }
@@ -1150,7 +1150,7 @@
         #next-alarm-summary .next-alarm-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #30d158, #0a84ff);
+            background: #0a84ff;
             transition: width 0.3s ease;
         }
 
@@ -1627,6 +1627,7 @@
         let _lastAlarmCommitPayload = '';
         let _setAlarmLocked = false;
         const MAX_ALARMS = 10;
+        const MAX_ACTIVE_TIMERS = 5;
         const MAX_TIMER_HISTORY = 10;
         let previousTimerHistory = [];
 
@@ -1685,7 +1686,7 @@
                 normalized.push(d);
             });
             normalized.sort((a, b) => a - b);
-            return normalized.length ? normalized : [...ALL_DAY_INDICES];
+            return normalized;
         }
 
         function _defaultAlarmName(index) {
@@ -1699,6 +1700,7 @@
 
         function _formatRepeatDays(days) {
             const normalized = _normalizeRepeatDays(days);
+            if (normalized.length === 0) return 'Never';
             if (normalized.length === 7) return 'Every day';
             if (normalized.join(',') === '1,2,3,4,5') return 'Weekdays';
             if (normalized.join(',') === '0,6') return 'Weekends';
@@ -1834,6 +1836,53 @@
                 .filter(entry => String((entry && entry.timerId) || '') !== target);
         }
 
+        function _removePreviousTimerEntry(timerId, completedAt) {
+            const targetId = String(timerId || '');
+            const targetCompletedAt = Number(completedAt) || 0;
+            previousTimerHistory = (Array.isArray(previousTimerHistory) ? previousTimerHistory : [])
+                .filter(entry => {
+                    if (!entry) return false;
+                    return !(String(entry.timerId || '') === targetId && Number(entry.completedAt || 0) === targetCompletedAt);
+                });
+            _renderPreviousTimers();
+            saveState();
+        }
+
+        function _setTimerFromHistory(timerId, completedAt) {
+            const targetId = String(timerId || '');
+            const targetCompletedAt = Number(completedAt) || 0;
+            const entry = (Array.isArray(previousTimerHistory) ? previousTimerHistory : [])
+                .find(item => item && String(item.timerId || '') === targetId && Number(item.completedAt || 0) === targetCompletedAt);
+            const normalized = _normalizeTimerHistoryEntry(entry);
+            if (!normalized) return;
+            if (!_canActivateAnotherTimer()) {
+                _syncCreateTimerButtonState();
+                return;
+            }
+            const duration = Math.max(1000, Number(normalized.setDurationMs) || 0);
+            const newId = String(Date.now()) + Math.random().toString(36).slice(2, 6);
+            const timer = {
+                id: newId,
+                label: String(normalized.label || 'Timer'),
+                total: duration,
+                setDurationMs: duration,
+                skipHistoryOnFinish: true,
+                remaining: duration,
+                interval: null,
+                active: false,
+                endAt: null
+            };
+            _timers.unshift(timer);
+            if (!_startTimerInterval(timer)) {
+                _timers = _timers.filter(tm => tm.id !== newId);
+                _renderTimers();
+                saveState();
+                return;
+            }
+            _renderTimers();
+            saveState();
+        }
+
         function _renderPreviousTimers() {
             const list = document.getElementById('previous-timers-list');
             if (!list) return;
@@ -1848,16 +1897,28 @@
             }
 
             list.innerHTML = items.map(entry => {
-                const when = new Date(entry.completedAt);
-                const whenStr = `${when.toLocaleDateString()} ${when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
                 return `<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);">
-                    <div style="min-width:0;">
+                    <div style="min-width:0; flex:1;">
                         <div style="font-size:13px; font-weight:800; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${entry.label}</div>
-                        <div style="font-size:11px; color:var(--text-secondary);">${whenStr}</div>
+                        <div style="display:flex; gap:6px; margin-top:8px;">
+                            <button type="button" class="previous-timer-set-btn" data-timer-id="${entry.timerId}" data-completed-at="${entry.completedAt}" style="border:none; border-radius:8px; padding:6px 8px; font-size:10px; font-weight:900; letter-spacing:0.6px; text-transform:uppercase; background:rgba(10,132,255,0.22); color:#dbe9ff; cursor:pointer;">Set this timer</button>
+                            <button type="button" class="previous-timer-delete-btn" data-timer-id="${entry.timerId}" data-completed-at="${entry.completedAt}" style="border:none; border-radius:8px; padding:6px 8px; font-size:10px; font-weight:900; letter-spacing:0.6px; text-transform:uppercase; background:rgba(255,69,58,0.18); color:#ffd8d4; cursor:pointer;">Delete</button>
+                        </div>
                     </div>
                     <div style="font-size:12px; font-weight:900; color:#fff; white-space:nowrap;">${_formatMs(entry.setDurationMs)}</div>
                 </div>`;
             }).join('');
+
+            list.querySelectorAll('.previous-timer-set-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    _setTimerFromHistory(btn.dataset.timerId, btn.dataset.completedAt);
+                });
+            });
+            list.querySelectorAll('.previous-timer-delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    _removePreviousTimerEntry(btn.dataset.timerId, btn.dataset.completedAt);
+                });
+            });
         }
 
         function _formatNextAlarmRemaining(ms) {
@@ -1960,6 +2021,7 @@
                 total: Math.max(0, Number(t.total) || 0),
                 setDurationMs: Math.max(0, Number(t.setDurationMs) || Number(t.total) || 0),
                 remaining: Math.max(0, Number(t.remaining) || 0),
+                skipHistoryOnFinish: !!t.skipHistoryOnFinish,
                 active: !!t.active,
                 endAt: t.active ? Math.max(Date.now(), Number(t.endAt) || (Date.now() + Math.max(0, Number(t.remaining) || 0))) : null
             }));
@@ -2108,6 +2170,7 @@
                     total: Math.max(0, Number(pt.total) || 0),
                     setDurationMs: Math.max(0, Number(pt.setDurationMs) || Number(pt.total) || 0),
                     remaining: Math.max(0, Number(pt.remaining) || 0),
+                    skipHistoryOnFinish: !!pt.skipHistoryOnFinish,
                     interval: null,
                     active: !!pt.active,
                     endAt: null
@@ -2752,12 +2815,22 @@
             
             const todayDayIndex = now.getDay();
             const allowedDays = _getRepeatDaysForAlarm(idx);
+            const noRepeatDays = !Array.isArray(allowedDays) || allowedDays.length === 0;
             
             let alarmTime = new Date();
             alarmTime.setHours(parsed.hh, parsed.mm, 0, 0);
             
             let timeMs = alarmTime - now;
-            
+
+            if (noRepeatDays) {
+                // "Never" means one-time: next occurrence only.
+                if (timeMs <= 0) {
+                    alarmTime.setDate(alarmTime.getDate() + 1);
+                    timeMs = alarmTime - now;
+                }
+                return Math.max(0, timeMs);
+            }
+
             if (timeMs <= 0 || !allowedDays.includes(todayDayIndex)) {
                 let daysAhead = 1;
                 let nextDayIndex = (todayDayIndex + daysAhead) % 7;
@@ -2841,8 +2914,10 @@
             }
 
             const selectedDays = _getRepeatDaysForAlarm(index);
-            const firstDay = DAY_LABELS[selectedDays[0] ?? 0];
-            _scrollWheelToValue('d-wheel', firstDay);
+            if (Array.isArray(selectedDays) && selectedDays.length > 0) {
+                const firstDay = DAY_LABELS[selectedDays[0]];
+                _scrollWheelToValue('d-wheel', firstDay);
+            }
             selectedAlarmType = (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine';
             setAlarmType(selectedAlarmType);
 
@@ -2935,10 +3010,6 @@
                         .map(el => Number(el.dataset.dayIndex))
                         .filter(v => Number.isInteger(v) && v >= 0 && v <= 6)
                         .sort((a, b) => a - b);
-                    if (selected.length === 0) {
-                        input.checked = true;
-                        return;
-                    }
                     alarmsRepeatDays[index] = _normalizeRepeatDays(selected);
                     alarmsMeta[index] = _formatRepeatDays(alarmsRepeatDays[index]);
                     const labelEl = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${index}"] .alarm-repeat-label`);
@@ -3175,8 +3246,9 @@
                     if (editing && editIdx >= 0 && editIdx < alarms.length) {
                         alarms[editIdx] = newAlarm;
                         alarmNames[editIdx] = _normalizeAlarmName(alarmNames[editIdx], editIdx);
-                        alarmsRepeatDays[editIdx] = normalizedDays;
-                        alarmsMeta[editIdx] = _formatRepeatDays(normalizedDays);
+                        // Keep user's existing repeat selection when editing.
+                        alarmsRepeatDays[editIdx] = _normalizeRepeatDays(_getRepeatDaysForAlarm(editIdx));
+                        alarmsMeta[editIdx] = _formatRepeatDays(alarmsRepeatDays[editIdx]);
                         alarmTypes[editIdx] = normalizedType;
                         alarmEnabled[editIdx] = alarmEnabled[editIdx] !== false;
                     } else {
@@ -3632,6 +3704,7 @@
         let _timerOverlay = null;
         let _currentRingingTimerId = null;
         let _currentTimerStopFn = null;
+        let _currentRingingTimerSnapshot = null;
 
         function _clearAlarmAutoStopTimer(index) {
             const timerId = _alarmAutoStopTimers.get(index);
@@ -3701,7 +3774,7 @@
                 if (!parsed) return;
                 if (parsed.hh === nowHH && parsed.mm === nowMM) {
                     const allowedDays = _getRepeatDaysForAlarm(idx);
-                    if (!allowedDays.includes(todayDayIndex)) return;
+                    if (Array.isArray(allowedDays) && allowedDays.length > 0 && !allowedDays.includes(todayDayIndex)) return;
 
                     if (_alarmsFiredOn[idx] === todayKey) return;
 
@@ -4041,7 +4114,9 @@
         }
 
         function _ringAlarm(index) {
-            if (Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length && alarmEnabled[index] !== false) {
+            const repeatDays = _getRepeatDaysForAlarm(index);
+            const shouldAutoDisableAfterRing = !Array.isArray(repeatDays) || repeatDays.length === 0;
+            if (shouldAutoDisableAfterRing && Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length && alarmEnabled[index] !== false) {
                 alarmEnabled[index] = false;
                 try { renderAlarms(); } catch (e) {}
                 try { saveState(); } catch (e) {}
@@ -4348,6 +4423,31 @@
 
         
         let _timers = [];
+        function _countActiveTimers(excludeTimerId = null) {
+            const exclude = excludeTimerId !== null ? String(excludeTimerId) : null;
+            return _timers.reduce((count, t) => {
+                if (!t || t.active !== true) return count;
+                if (exclude !== null && String(t.id) === exclude) return count;
+                return count + 1;
+            }, 0);
+        }
+
+        function _canActivateAnotherTimer(excludeTimerId = null) {
+            return _countActiveTimers(excludeTimerId) < MAX_ACTIVE_TIMERS;
+        }
+
+        function _syncCreateTimerButtonState() {
+            const btn = document.getElementById('create-timer-btn');
+            if (!btn) return;
+            const atLimit = _countActiveTimers() >= MAX_ACTIVE_TIMERS;
+            btn.disabled = atLimit;
+            btn.style.pointerEvents = atLimit ? 'none' : 'auto';
+            btn.style.opacity = atLimit ? '0.6' : '1';
+            btn.style.background = atLimit ? '#7a7f88' : '';
+            btn.style.color = atLimit ? '#d9dde3' : '';
+            btn.title = atLimit ? `Active timer limit reached (${MAX_ACTIVE_TIMERS})` : '';
+        }
+
         function _formatMs(ms){
             const s = Math.max(0, Math.floor(ms/1000));
             const hh = Math.floor(s/3600);
@@ -4383,6 +4483,7 @@
                 const timerId = btn.dataset.timerId;
                 btn.onclick = () => deleteTimer(timerId);
             });
+            _syncCreateTimerButtonState();
             _renderPreviousTimers();
         }
 
@@ -4396,8 +4497,12 @@
         }
 
         function _startTimerInterval(timer, opts = {}) {
-            const { preserveEndAt = false, persist = true } = opts;
+            const { preserveEndAt = false, persist = true, allowLimitBypass = false } = opts;
             if (!timer) return;
+            if (timer.active !== true && !allowLimitBypass && !_canActivateAnotherTimer(timer.id)) {
+                _syncCreateTimerButtonState();
+                return false;
+            }
             clearInterval(timer.interval);
             timer.active = true;
             timer.endAt = preserveEndAt && Number.isFinite(Number(timer.endAt))
@@ -4414,13 +4519,12 @@
                     _timerDone(timer);
                     return;
                 }
-                if (!window._holdToDeleteInProgress) {
-                    _renderTimers();
-                } else {
-                    _updateTimerDisplay(timer.id);
-                }
+                // Keep DOM nodes stable while timer runs so control clicks are reliable.
+                _updateTimerDisplay(timer.id);
             }, 250);
             if (persist) saveState();
+            _syncCreateTimerButtonState();
+            return true;
         }
 
         function _stopTimerInterval(timer, persist = true) {
@@ -4433,6 +4537,7 @@
             timer.active = false;
             timer.endAt = null;
             if (persist) saveState();
+            _syncCreateTimerButtonState();
         }
         function getWheelValue(wheelId) {
             const wheel = document.getElementById(wheelId);
@@ -4457,8 +4562,12 @@
             const sec = getWheelValue('timer-sec-wheel');
             const total = (hour*3600 + min*60 + sec)*1000;
             if (total <= 0) return;
+            if (!_canActivateAnotherTimer()) {
+                _syncCreateTimerButtonState();
+                return;
+            }
             const id = String(Date.now()) + Math.random().toString(36).slice(2,6);
-            const timer = { id, label, total, setDurationMs: total, remaining: total, interval: null, active: false, endAt: null };
+            const timer = { id, label, total, setDurationMs: total, skipHistoryOnFinish: false, remaining: total, interval: null, active: false, endAt: null };
             _timers.unshift(timer);
             
             _startTimerInterval(timer);
@@ -4474,7 +4583,7 @@
             if (t.active) {
                 _stopTimerInterval(t);
             } else {
-                _startTimerInterval(t);
+                if (!_startTimerInterval(t)) return;
             }
             _renderTimers();
         }
@@ -4499,7 +4608,17 @@
         }
         function _timerDone(t) {
             try {
-                _recordPreviousTimer(t);
+                _currentRingingTimerSnapshot = {
+                    id: String(t.id || ''),
+                    label: String(t.label || ''),
+                    total: Math.max(0, Number(t.total) || 0),
+                    setDurationMs: Math.max(0, Number(t.setDurationMs) || Number(t.total) || 0)
+                };
+                if (!t.skipHistoryOnFinish) _recordPreviousTimer(t);
+                const doneIdx = _timers.findIndex(tm => tm && tm.id === t.id);
+                if (doneIdx >= 0) _timers.splice(doneIdx, 1);
+                _renderTimers();
+                saveState();
                 const stop = _startBeep();
                 _currentRingingTimerId = t.id;
                 _currentTimerStopFn = stop;
@@ -4573,13 +4692,32 @@
                         
                         try { if (typeof _currentTimerStopFn === 'function') _currentTimerStopFn(); } catch (e) {}
                         _stopAllBeeps();
-                        
-                        const timer = _timers.find(tm => tm.id === _currentRingingTimerId);
-                        if (timer) {
-                            const extendMs = extMinutes * 60 * 1000;
-                            timer.remaining = extendMs;
-                            timer.total += extendMs;
-                            _startTimerInterval(timer);
+                        if (!_canActivateAnotherTimer()) {
+                            _closeTimerOverlay();
+                            _syncCreateTimerButtonState();
+                            return;
+                        }
+                        const extendMs = Math.max(1, extMinutes) * 60 * 1000;
+                        const base = _currentRingingTimerSnapshot || {};
+                        const newId = String(Date.now()) + Math.random().toString(36).slice(2, 6);
+                        const timer = {
+                            id: newId,
+                            label: String(base.label || 'Timer'),
+                            total: extendMs,
+                            setDurationMs: extendMs,
+                            skipHistoryOnFinish: true,
+                            remaining: extendMs,
+                            interval: null,
+                            active: false,
+                            endAt: null
+                        };
+                        _timers.unshift(timer);
+                        if (!_startTimerInterval(timer)) {
+                            _timers = _timers.filter(tm => tm.id !== newId);
+                            _closeTimerOverlay();
+                            _renderTimers();
+                            saveState();
+                            return;
                         }
                         
                         _closeTimerOverlay();
@@ -4698,7 +4836,7 @@
                 const ttl = document.getElementById('timer-title');
                 const metaEl = document.getElementById('timer-meta');
                 if (ttl) ttl.textContent = t.label ? `Timer — ${t.label}` : 'Timer Finished';
-                if (metaEl) metaEl.textContent = `Duration: ${_formatMs(t.total)}`;
+                if (metaEl) metaEl.textContent = `Duration: ${_formatMs(Math.max(0, Number(t.setDurationMs) || Number(t.total) || 0))}`;
 
                 try { switchTab('timers'); } catch (e) {}
 
@@ -4713,6 +4851,7 @@
                 _timerOverlay = null;
                 _currentRingingTimerId = null;
                 _currentTimerStopFn = null;
+                _currentRingingTimerSnapshot = null;
             }
         }
         document.getElementById('create-timer-btn')?.addEventListener('click', createTimer);
