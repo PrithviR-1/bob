@@ -554,10 +554,10 @@
         #progress-fill {
             width: 0%;
             height: 100%;
-            background: #30d158;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
             border-radius: 20px;
             transition: width 1.2s cubic-bezier(0.65, 0, 0.35, 1);
-            box-shadow: 0 0 25px rgba(52, 199, 89, 0.5);
+            box-shadow: 0 0 18px rgba(149, 192, 234, 0.45);
         }
 
         
@@ -581,6 +581,25 @@
         .item.checked { 
             background: rgba(48, 209, 88, 0.15); 
             border-color: rgba(48, 209, 88, 0.3);
+        }
+        .item.completing {
+            pointer-events: none;
+            animation: routine-item-fade-out 560ms ease forwards;
+        }
+        .item.completing::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(48, 209, 88, 0.95), rgba(101, 230, 136, 0.95));
+            transform: translateY(-50%) scaleX(0);
+            transform-origin: left center;
+            animation: routine-item-strike 560ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+            box-shadow: 0 0 10px rgba(48, 209, 88, 0.45);
+            pointer-events: none;
         }
         .item span { font-size: 18px; font-weight: 700; color: #fff; }
 
@@ -645,10 +664,12 @@
             transition: all 0.4s ease;
             font-weight: 400;
         }
-        .wheel div.active { 
-            color: var(--accent-blue); 
-            font-weight: 600; 
-            transform: scale(1.4); 
+        .wheel div.active {
+            color: var(--action-grad-start);
+            font-weight: 600;
+            transform: scale(1.4);
+            text-shadow: 0 0 8px rgba(149, 192, 234, 0.9), 0 0 18px rgba(196, 231, 199, 0.75);
+            filter: drop-shadow(0 0 6px rgba(149, 192, 234, 0.45));
         }
 
         
@@ -993,6 +1014,17 @@
             100% { opacity: 0; transform: translate3d(var(--ex, 120vw), var(--ey, 60vh), 0) rotate(var(--shoot-angle, -26deg)); }
         }
 
+        @keyframes routine-item-strike {
+            0% { transform: translateY(-50%) scaleX(0); opacity: 0.95; }
+            70% { transform: translateY(-50%) scaleX(1); opacity: 1; }
+            100% { transform: translateY(-50%) scaleX(1); opacity: 0.92; }
+        }
+
+        @keyframes routine-item-fade-out {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-8px); }
+        }
+
         @keyframes bird-fly {
             0% {
                 transform: translate3d(var(--sx, -16vw), 0, 0) rotate(var(--tilt, 0deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
@@ -1140,6 +1172,9 @@
         #body.bg-animations-paused .birds-layer,
         #body.bg-animations-paused .wind-layer,
         #body.bg-animations-paused .cloud-container {
+            display: none !important;
+        }
+        #body.bg-animations-paused #stage {
             display: none !important;
         }
 
@@ -1363,7 +1398,9 @@
             color: #5f6c7c;
         }
         #body.theme-light .wheel div.active {
-            color: #0a66ff;
+            color: var(--action-grad-start);
+            text-shadow: 0 0 8px rgba(149, 192, 234, 0.85), 0 0 14px rgba(196, 231, 199, 0.6);
+            filter: drop-shadow(0 0 5px rgba(149, 192, 234, 0.35));
         }
 
         #body.theme-light input[type="text"],
@@ -1507,7 +1544,7 @@
         #next-alarm-summary .next-alarm-fill {
             height: 100%;
             width: 0%;
-            background: #0a84ff;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
             transition: width 0.3s ease;
         }
 
@@ -3134,7 +3171,16 @@
                 tasks.forEach(t => {
                     const item = document.createElement('div');
                     item.className = `item ${t.done ? 'checked' : ''}`;
-                    item.onclick = () => toggleTaskCompletion(t.id);
+                    item.dataset.taskId = String(t.id);
+                    item.onclick = () => {
+                        if (t.done) {
+                            toggleTaskCompletion(t.id);
+                            return;
+                        }
+                        if (item.classList.contains('completing')) return;
+                        item.classList.add('completing');
+                        setTimeout(() => toggleTaskCompletion(t.id), 560);
+                    };
 
                     const check = document.createElement('div');
                     check.className = 'check-circle';
