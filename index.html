@@ -56,14 +56,26 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
         body { 
             height: 100vh; 
+            min-height: 100dvh;
+            max-height: 100dvh;
             width: 100vw;
             overflow: hidden; 
             background: #000; 
             color: var(--text-primary); 
             display: flex;
             justify-content: center;
+            position: fixed;
+            inset: 0;
+            overscroll-behavior: none;
         }
 
         
@@ -471,14 +483,19 @@
         #app-ui {
             position: relative;
             height: 100vh;
+            min-height: 100dvh;
+            max-height: 100dvh;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 60px 24px;
+            padding: 60px 24px calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
+            overflow-x: hidden;
             z-index: 100; 
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
         }
 
         #app-ui::-webkit-scrollbar { display: none; }
@@ -649,27 +666,38 @@
             flex: 1;
             overflow-y: scroll;
             scrollbar-width: none;
-            scroll-snap-type: y mandatory;
+            scroll-snap-type: none;
             padding: 90px 0;
             z-index: 2;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
+            overscroll-behavior-y: contain;
+            cursor: ns-resize;
+            -webkit-overflow-scrolling: touch;
+            will-change: scroll-position;
         }
         .wheel::-webkit-scrollbar { display: none; }
         .wheel div { 
             height: 40px; 
             line-height: 40px; 
             text-align: center; 
-            scroll-snap-align: center;
             font-size: 24px;
             color: var(--text-secondary);
-            transition: all 0.4s ease;
+            transition: color 0.12s ease, transform 0.12s ease;
             font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
         }
         .wheel div.active {
-            color: var(--action-grad-start);
+            color: transparent;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
             font-weight: 600;
-            transform: scale(1.4);
-            text-shadow: 0 0 8px rgba(149, 192, 234, 0.9), 0 0 18px rgba(196, 231, 199, 0.75);
-            filter: drop-shadow(0 0 6px rgba(149, 192, 234, 0.45));
+            transform: scale(1.22);
         }
 
         
@@ -705,11 +733,29 @@
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 12px 22px rgba(111, 132, 157, 0.28);
         }
 
+        .input-action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            min-width: 0;
+        }
+        .input-action-row input[type="text"] {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .input-action-row .btn-add {
+            flex: 0 0 auto;
+            min-width: 78px;
+            padding: 16px 20px;
+            white-space: nowrap;
+        }
+
         .alarm-row {
             position: relative;
             transition: box-shadow .2s ease;
             padding: 24px 20px !important;
-            margin-bottom: 12px !important;
+            margin-bottom: 22px !important;
             border-radius: 14px !important;
             display: flex !important;
             flex-direction: column !important;
@@ -717,12 +763,56 @@
             gap: 14px !important;
             overflow: hidden;
         }
+        .alarm-row::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 20%;
+            background: linear-gradient(
+                180deg,
+                rgba(149, 192, 234, 0) 0%,
+                rgba(149, 192, 234, 0.03) 60%,
+                rgba(196, 231, 199, 0.055) 100%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+        .alarm-row > * {
+            position: relative;
+            z-index: 1;
+        }
         .alarm-time-row {
             width: 100%;
             display: flex;
             align-items: center;
             gap: 10px;
             min-width: 0;
+        }
+        .alarm-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            min-width: 0;
+        }
+        .alarm-name-main {
+            flex: 1;
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alarm-name-row .alarm-type-toggle {
+            margin-left: 10px;
+            flex: 0 0 auto;
+        }
+        .alarm-name-main .alarm-name-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .alarm-time-main {
             display: inline-flex;
@@ -797,10 +887,13 @@
             width: 100%;
             min-width: 0;
         }
-        .alarm-controls-row .alarm-edit-btn,
-        .alarm-controls-row .alarm-delete-btn {
-            flex: 1 1 0;
+        .alarm-controls-row .alarm-edit-btn {
+            flex: 1 1 auto;
             min-width: 0;
+        }
+        .alarm-controls-row .alarm-delete-btn {
+            flex: 0 0 54px;
+            min-width: 54px;
         }
         .alarm-controls-row .alarm-toggle-btn {
             flex: 0 0 56px;
@@ -822,6 +915,13 @@
             transition: background .2s ease, color .2s ease;
         }
         .alarm-edit-btn:hover { background: rgba(255,255,255,0.12); }
+        .alarm-edit-label {
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
         #body.theme-light .alarm-name-text {
             color: #101418 !important;
         }
@@ -853,6 +953,11 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 100%;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
         }
         .alarm-row .alarm-toggle-btn {
             --toggle-track-height: 32px;
@@ -888,14 +993,27 @@
         }
         .alarm-row .alarm-delete-btn {
             min-height: 44px;
-            min-width: 88px;
-            padding: 10px 12px !important;
+            min-width: 54px;
+            padding: 8px 10px !important;
             border-radius: 10px !important;
-            background: rgba(255,69,58,0.08) !important;
+            background: #ff3b30 !important;
+            color: #ffffff !important;
             letter-spacing: 1.1px !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .alarm-row .alarm-delete-btn:hover {
-            background: rgba(255,69,58,0.15) !important;
+            background: #e0352d !important;
+        }
+        .alarm-row .alarm-delete-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         .alarm-repeat-popover {
             position: fixed;
@@ -1130,21 +1248,6 @@
             }
         }
 
-        @keyframes click-radar {
-            0% {
-                opacity: 0.95;
-                transform: translate(-50%, -50%) scale(0.2);
-            }
-            60% {
-                opacity: 0.45;
-                transform: translate(-50%, -50%) scale(4.6);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(6.8);
-            }
-        }
-
         @keyframes routine-strike-sweep {
             0% { transform: translateY(-50%) scaleX(0); opacity: 0.95; }
             70% { transform: translateY(-50%) scaleX(1); opacity: 1; }
@@ -1207,6 +1310,13 @@
             .moon-system { width: 100px; height: 100px; top: 4%; left: 50%; }
             .moon-body { width: 64px; height: 64px; }
             .moon-shadow { width: 64px; height: 64px; }
+            #app-ui { padding: 50px 16px calc(130px + env(safe-area-inset-bottom)); }
+            .input-action-row { gap: 10px; }
+            .input-action-row .btn-add { min-width: 72px; padding: 14px 16px; }
+            .bottom-nav .nav-inner { padding: 7px; gap: 4px; border-radius: 22px; }
+            .tab-btn { padding: 7px 4px; font-size: 9px; gap: 4px; }
+            .tab-label { font-size: 8px; letter-spacing: 0.35px; }
+            .tab-icon { width: 17px; height: 17px; }
         }
 
         
@@ -1217,9 +1327,9 @@
         
         .bottom-nav {
             position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 18px;
+            left: max(8px, env(safe-area-inset-left));
+            right: max(8px, env(safe-area-inset-right));
+            bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
             z-index: 200;
@@ -1227,10 +1337,12 @@
         }
         .bottom-nav .nav-inner {
             display: flex;
-            gap: 10px;
+            width: min(100%, 540px);
+            max-width: 100%;
+            gap: 6px;
             background: #111214;
             border: 1px solid rgba(255,255,255,0.06);
-            padding: 10px;
+            padding: 8px;
             border-radius: 28px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             backdrop-filter: none;
@@ -1238,22 +1350,23 @@
         .tab-btn {
             background: transparent;
             color: var(--text-primary);
-            padding: 8px 12px;
+            padding: 8px 6px;
             border-radius: 14px;
             font-weight: 800;
             cursor: pointer;
             border: none;
-            font-size: 11px;
+            font-size: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 5px;
-            min-width: 72px;
+            min-width: 0;
+            flex: 1 1 0;
         }
         .tab-icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
@@ -1261,8 +1374,10 @@
             stroke-linejoin: round;
         }
         .tab-label {
+            font-size: 10px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            white-space: nowrap;
         }
         .tab-btn.active {
             background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
@@ -1279,18 +1394,11 @@
             border: 1px solid var(--action-border) !important;
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 18px rgba(111, 132, 157, 0.22);
         }
-        .click-radar {
-            position: fixed;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid rgba(110, 187, 255, 0.85);
-            background: rgba(110, 187, 255, 0.1);
-            transform: translate(-50%, -50%) scale(0.2);
-            pointer-events: none;
-            z-index: 12000;
-            animation: click-radar 620ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
-            box-shadow: 0 0 22px rgba(110, 187, 255, 0.55);
+        button {
+            transition: filter 0.12s ease;
+        }
+        button:active {
+            filter: brightness(0.92);
         }
         
         .glass-card.aux { padding: 22px; max-width: 640px; }
@@ -1398,9 +1506,10 @@
             color: #5f6c7c;
         }
         #body.theme-light .wheel div.active {
-            color: var(--action-grad-start);
-            text-shadow: 0 0 8px rgba(149, 192, 234, 0.85), 0 0 14px rgba(196, 231, 199, 0.6);
-            filter: drop-shadow(0 0 5px rgba(149, 192, 234, 0.35));
+            color: transparent;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         #body.theme-light input[type="text"],
@@ -1438,8 +1547,12 @@
         #body.theme-light .alarm-row {
             border-color: rgba(16, 20, 24, 0.12) !important;
         }
-        #body.theme-light .alarm-edit-btn,
         #body.theme-light .alarm-expand-btn {
+            background: rgba(16, 20, 24, 0.06);
+            color: #0a66ff;
+            border-color: rgba(16, 20, 24, 0.16);
+        }
+        #body.theme-light .alarm-edit-btn {
             background: rgba(16, 20, 24, 0.06);
             color: #0a66ff;
             border-color: rgba(16, 20, 24, 0.16);
@@ -1499,12 +1612,6 @@
             border-color: rgba(16, 20, 24, 0.14) !important;
             background: rgba(16, 20, 24, 0.05) !important;
         }
-        #body.theme-light #sw-laps [style] {
-            border-color: rgba(16, 20, 24, 0.14) !important;
-            background: rgba(16, 20, 24, 0.04) !important;
-            color: #101418 !important;
-        }
-
         #body.theme-dark {
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
@@ -1774,7 +1881,7 @@
             <section style="margin-bottom: 45px;">
                 <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Modify Routine</p>
                 <div id="edit-list"></div>
-                <div style="display: flex; gap: 14px; margin-top: 25px;">
+                <div class="input-action-row" style="margin-top: 25px;">
                     <input type="text" id="task-in" placeholder="Add new morning habit...">
                     <button class="btn-add" onclick="addTask()">Add</button>
                 </div>
@@ -1786,7 +1893,7 @@
         
         <div id="screen-timers" class="glass-card hidden aux" style="max-width:480px;">
             <h2 style="font-size:28px; margin-bottom:18px;">Timers</h2>
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <div class="input-action-row" style="margin-bottom:12px;">
                 <input id="timer-label" type="text" placeholder="Label" style="flex:1; padding:12px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:#fff;">
                 <button class="btn-add" id="create-timer-btn">Create</button>
             </div>
@@ -1812,10 +1919,8 @@
             <div style="font-weight:900; font-size:36px; text-align:center; margin-bottom:12px;" id="sw-display">00:00.00</div>
             <div style="display:flex; gap:10px; justify-content:center; margin-bottom:12px;">
                 <button class="btn-add" id="sw-start">Start</button>
-                <button class="btn-add" id="sw-lap">Lap</button>
                 <button class="btn-add" id="sw-reset">Reset</button>
             </div>
-            <div id="sw-laps" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow:auto;"></div>
         </div>
         
         <div id="screen-sounds" class="glass-card hidden aux" style="max-width:480px;">
@@ -1949,6 +2054,7 @@
         let alarmNames = [];
 
         const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const EVERY_DAY_LABEL = 'Always';
         const ALL_DAY_INDICES = [0,1,2,3,4,5,6];
         let alarmsMeta = alarms.map(() => 'Everyday');
         let alarmsRepeatDays = alarms.map(() => [...ALL_DAY_INDICES]);
@@ -2399,8 +2505,7 @@
             const elapsedNow = _sw_elapsed + (_sw_running ? (Date.now() - _sw_start) : 0);
             return {
                 running: !!_sw_running,
-                elapsed: Math.max(0, elapsedNow),
-                laps: Array.isArray(_sw_laps) ? _sw_laps.filter(v => Number.isFinite(Number(v))).map(v => Math.max(0, Number(v))).slice(0, 100) : []
+                elapsed: Math.max(0, elapsedNow)
             };
         }
 
@@ -2474,7 +2579,6 @@
                 _sw_running = false;
                 _sw_elapsed = 0;
                 _sw_start = 0;
-                _sw_laps = [];
                 if (_sw_tick) { clearInterval(_sw_tick); _sw_tick = null; }
                 const swBtn = document.getElementById('sw-start');
                 if (swBtn) swBtn.textContent = 'Start';
@@ -2568,10 +2672,8 @@
             _sw_running = false;
             _sw_elapsed = 0;
             _sw_start = 0;
-            _sw_laps = [];
             if (state.stopwatch && typeof state.stopwatch === 'object') {
                 _sw_elapsed = Math.max(0, Number(state.stopwatch.elapsed) || 0);
-                _sw_laps = Array.isArray(state.stopwatch.laps) ? state.stopwatch.laps.filter(v => Number.isFinite(Number(v))).map(v => Math.max(0, Number(v))).slice(0, 100) : [];
                 if (state.stopwatch.running) {
                     _sw_running = true;
                     _sw_start = Date.now();
@@ -2604,7 +2706,6 @@
             initDayBirds();
             initWindFX();
             initCloudsMotion();
-            initClickRadar();
             initRepeatPopoverDismiss();
             const alarmCommitBtn = document.getElementById('set-alarm-btn') || document.getElementById('alarm-commit-btn');
             if (alarmCommitBtn) {
@@ -2730,6 +2831,175 @@
             }
         }
 
+        function _renderInfiniteWheel(wheel, values, opts = {}) {
+            if (!wheel) return;
+            const copyCount = Math.max(9, Number(opts.copyCount) || 15);
+            const normalizedValues = Array.isArray(values) ? values.map(v => String(v)) : [];
+            const valueCount = normalizedValues.length;
+            if (valueCount === 0) {
+                wheel.innerHTML = '';
+                return;
+            }
+            let markup = '';
+            for (let copy = 0; copy < copyCount; copy += 1) {
+                for (let idx = 0; idx < valueCount; idx += 1) {
+                    const value = normalizedValues[idx];
+                    markup += `<div class="wheel-item" data-wheel-value="${value}" data-wheel-index="${idx}">${value}</div>`;
+                }
+            }
+            wheel.innerHTML = markup;
+            wheel.dataset.infinite = 'true';
+            wheel.dataset.wheelValueCount = String(valueCount);
+            wheel.dataset.wheelCopyCount = String(copyCount);
+            wheel.dataset.wheelMiddleStart = String(Math.floor(copyCount / 2) * valueCount);
+            wheel._wheelItems = Array.from(wheel.querySelectorAll('.wheel-item'));
+            wheel._wheelRafId = null;
+            wheel._wheelIdleTimeout = null;
+            wheel._wheelActiveItem = null;
+        }
+
+        function _renderFiniteWheel(wheel, values) {
+            if (!wheel) return;
+            const normalizedValues = Array.isArray(values) ? values.map(v => String(v)) : [];
+            let markup = '<div class="wheel-spacer" aria-hidden="true"></div>';
+            normalizedValues.forEach((value, idx) => {
+                markup += `<div class="wheel-item" data-wheel-value="${value}" data-wheel-index="${idx}">${value}</div>`;
+            });
+            markup += '<div class="wheel-spacer" aria-hidden="true"></div>';
+            wheel.innerHTML = markup;
+            delete wheel.dataset.infinite;
+            delete wheel.dataset.wheelValueCount;
+            delete wheel.dataset.wheelCopyCount;
+            delete wheel.dataset.wheelMiddleStart;
+            wheel._wheelItems = Array.from(wheel.querySelectorAll('.wheel-item'));
+            wheel._wheelRafId = null;
+            wheel._wheelIdleTimeout = null;
+            wheel._wheelActiveItem = null;
+        }
+
+        function _getWheelItems(wheel) {
+            if (!wheel) return [];
+            if (Array.isArray(wheel._wheelItems) && wheel._wheelItems.length) return wheel._wheelItems;
+            wheel._wheelItems = Array.from(wheel.querySelectorAll('.wheel-item'));
+            return wheel._wheelItems;
+        }
+
+        function _getWheelGeometry(wheel) {
+            const items = _getWheelItems(wheel);
+            if (!items.length) return null;
+            const first = items[0];
+            const itemHeight = first.offsetHeight || 40;
+            const firstCenter = first.offsetTop + (itemHeight / 2);
+            return { items, itemHeight, firstCenter };
+        }
+
+        function _getWheelCenteredAbsoluteIndex(wheel) {
+            const geometry = _getWheelGeometry(wheel);
+            if (!geometry) return -1;
+            const centerPoint = wheel.scrollTop + (wheel.clientHeight / 2);
+            const raw = Math.round((centerPoint - geometry.firstCenter) / geometry.itemHeight);
+            return Math.max(0, Math.min(geometry.items.length - 1, raw));
+        }
+
+        function _getWheelCenteredItem(wheel) {
+            const items = _getWheelItems(wheel);
+            if (!items.length) return null;
+            const centeredIdx = _getWheelCenteredAbsoluteIndex(wheel);
+            return centeredIdx >= 0 ? items[centeredIdx] : null;
+        }
+
+        function _setWheelActiveItem(wheel, item) {
+            if (!wheel || !item) return;
+            if (wheel._wheelActiveItem === item) return;
+            if (wheel._wheelActiveItem) wheel._wheelActiveItem.classList.remove('active');
+            item.classList.add('active');
+            wheel._wheelActiveItem = item;
+        }
+
+        function _centerWheelOnItem(wheel, item, behavior = 'auto') {
+            if (!wheel || !item) return;
+            const targetTop = item.offsetTop - ((wheel.clientHeight - item.offsetHeight) / 2);
+            const finalTop = Math.max(0, targetTop);
+            if (Math.abs(wheel.scrollTop - finalTop) < 0.5) return;
+            if (behavior === 'smooth') {
+                wheel.scrollTo({ top: finalTop, behavior: 'smooth' });
+                return;
+            }
+            wheel.scrollTop = finalTop;
+        }
+
+        function _recenterInfiniteWheel(wheel) {
+            if (!wheel || wheel.dataset.infinite !== 'true') return;
+            const valueCount = Number(wheel.dataset.wheelValueCount) || 0;
+            const copyCount = Number(wheel.dataset.wheelCopyCount) || 0;
+            if (!valueCount || copyCount < 3) return;
+            const geometry = _getWheelGeometry(wheel);
+            if (!geometry) return;
+            const sourceIdx = _getWheelCenteredAbsoluteIndex(wheel);
+            if (sourceIdx < 0) return;
+            const baseIndex = sourceIdx % valueCount;
+            const cycle = Math.floor(sourceIdx / valueCount);
+            const middleCycle = Math.floor(copyCount / 2);
+            if (Math.abs(cycle - middleCycle) <= 1) return;
+            const targetAbsoluteIdx = (middleCycle * valueCount) + baseIndex;
+            const deltaItems = targetAbsoluteIdx - sourceIdx;
+            wheel.scrollTop += (deltaItems * geometry.itemHeight);
+        }
+
+        function _maintainInfiniteWheelLoop(wheel) {
+            if (!wheel || wheel.dataset.infinite !== 'true') return;
+            const valueCount = Number(wheel.dataset.wheelValueCount) || 0;
+            const copyCount = Number(wheel.dataset.wheelCopyCount) || 0;
+            if (!valueCount || copyCount < 5) return;
+            const geometry = _getWheelGeometry(wheel);
+            if (!geometry) return;
+            const sourceIdx = _getWheelCenteredAbsoluteIndex(wheel);
+            if (sourceIdx < 0) return;
+            const cycle = Math.floor(sourceIdx / valueCount);
+            const middleCycle = Math.floor(copyCount / 2);
+            const minSafeCycle = 2;
+            const maxSafeCycle = copyCount - 3;
+            if (cycle >= minSafeCycle && cycle <= maxSafeCycle) return;
+            const baseIndex = sourceIdx % valueCount;
+            const targetAbsoluteIdx = (middleCycle * valueCount) + baseIndex;
+            const deltaItems = targetAbsoluteIdx - sourceIdx;
+            wheel.scrollTop += (deltaItems * geometry.itemHeight);
+        }
+
+        function _updateWheelVisualOnFrame(wheel) {
+            if (!wheel) return;
+            const centered = _getWheelCenteredItem(wheel);
+            if (centered) _setWheelActiveItem(wheel, centered);
+        }
+
+        function _queueWheelVisualUpdate(wheel) {
+            if (!wheel) return;
+            if (wheel._wheelRafId) return;
+            wheel._wheelRafId = requestAnimationFrame(() => {
+                wheel._wheelRafId = null;
+                _updateWheelVisualOnFrame(wheel);
+            });
+        }
+
+        function _finalizeWheelAfterScroll(wheel) {
+            if (!wheel) return;
+            if (wheel.dataset.infinite === 'true') _recenterInfiniteWheel(wheel);
+            const centered = _getWheelCenteredItem(wheel);
+            if (centered) {
+                _centerWheelOnItem(wheel, centered, 'smooth');
+                _setWheelActiveItem(wheel, centered);
+            }
+        }
+
+        function _refreshAllPickerWheels() {
+            const wheelIds = ['h-wheel', 'm-wheel', 'd-wheel', 'p-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
+            wheelIds.forEach(id => {
+                const wheel = document.getElementById(id);
+                if (!wheel || wheel.clientHeight <= 0 || wheel.offsetHeight <= 0) return;
+                _finalizeWheelAfterScroll(wheel);
+            });
+        }
+
         function initPickerWheels() {
             const wheels = {
                 h: document.getElementById('h-wheel'),
@@ -2741,99 +3011,55 @@
                 timerSec: document.getElementById('timer-sec-wheel')
             };
 
-            let hMarkup = "<div></div>";
-            for(let i=1; i<=12; i++) hMarkup += `<div>${i}</div>`;
-            wheels.h.innerHTML = hMarkup + "<div></div>";
-
-            let mMarkup = "<div></div>";
-            for (let i = 0; i < 60; i++) {
-                mMarkup += `<div>${i.toString().padStart(2,'0')}</div>`;
-            }
-            wheels.m.innerHTML = mMarkup + "<div></div>";
-
-            let dMarkup = "<div></div>";
-            DAY_LABELS.forEach(d => { dMarkup += `<div>${d}</div>`; });
-            wheels.d.innerHTML = dMarkup + "<div></div>";
-
-            let timerHourMarkup = "<div></div>";
-            for (let i = 0; i <= 23; i++) {
-                timerHourMarkup += `<div>${i}</div>`;
-            }
-            wheels.timerHour.innerHTML = timerHourMarkup + "<div></div>";
-
-            let timerMinMarkup = "<div></div>";
-            for (let i = 0; i < 60; i++) {
-                timerMinMarkup += `<div>${i}</div>`;
-            }
-            wheels.timerMin.innerHTML = timerMinMarkup + "<div></div>";
-
-            let timerSecMarkup = "<div></div>";
-            for (let i = 0; i < 60; i++) {
-                timerSecMarkup += `<div>${i.toString().padStart(2,'0')}</div>`;
-            }
-            wheels.timerSec.innerHTML = timerSecMarkup + "<div></div>";
+            _renderInfiniteWheel(wheels.h, Array.from({ length: 12 }, (_, i) => String(i + 1)));
+            _renderInfiniteWheel(wheels.m, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
+            _renderInfiniteWheel(wheels.d, [EVERY_DAY_LABEL, ...DAY_LABELS]);
+            _renderFiniteWheel(wheels.p, ['AM', 'PM']);
+            _renderInfiniteWheel(wheels.timerHour, Array.from({ length: 24 }, (_, i) => String(i)));
+            _renderInfiniteWheel(wheels.timerMin, Array.from({ length: 60 }, (_, i) => String(i)));
+            _renderInfiniteWheel(wheels.timerSec, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
 
             Object.values(wheels).forEach(wheel => {
                 if (wheel) {
+                    wheel.addEventListener('dragstart', (evt) => {
+                        evt.preventDefault();
+                    });
                     wheel.addEventListener('scroll', () => {
-                        clearTimeout(wheel.snapTimeout);
-                        wheel.snapTimeout = setTimeout(() => handleWheelSnap(wheel), 150);
+                        _maintainInfiniteWheelLoop(wheel);
+                        _queueWheelVisualUpdate(wheel);
+                        clearTimeout(wheel._wheelIdleTimeout);
+                        wheel._wheelIdleTimeout = setTimeout(() => _finalizeWheelAfterScroll(wheel), 140);
                     });
                 }
             });
 
             setTimeout(() => {
+                _scrollWheelToValue('h-wheel', '12');
+                _scrollWheelToValue('m-wheel', '00');
+                _scrollWheelToValue('d-wheel', EVERY_DAY_LABEL);
+                _scrollWheelToValue('p-wheel', 'AM');
+                _scrollWheelToValue('timer-hour-wheel', '0');
+                _scrollWheelToValue('timer-min-wheel', '0');
+                _scrollWheelToValue('timer-sec-wheel', '00');
                 Object.values(wheels).forEach(w => {
-                    if (w) handleWheelSnap(w);
+                    if (w) _finalizeWheelAfterScroll(w);
                 });
-                const timerHourWheel = document.getElementById('timer-hour-wheel');
-                const timerMinWheel = document.getElementById('timer-min-wheel');
-                const timerSecWheel = document.getElementById('timer-sec-wheel');
-                if (timerHourWheel) timerHourWheel.scrollTop = 40 * 0; // 0 hours
-                if (timerMinWheel) timerMinWheel.scrollTop = 40 * 0; // 0 minutes
-                if (timerSecWheel) timerSecWheel.scrollTop = 40 * 30; // 30 seconds
+                requestAnimationFrame(() => requestAnimationFrame(_refreshAllPickerWheels));
             }, 120);
         }
 
         function handleWheelSnap(wheel) {
-            const children = wheel.querySelectorAll('div');
-            const centerPoint = wheel.scrollTop + (wheel.clientHeight / 2);
-            
-            children.forEach(child => {
-                const childCenter = child.offsetTop + (child.clientHeight / 2);
-                const isSelected = Math.abs(centerPoint - childCenter) < 25;
-                
-                if (isSelected) {
-                    child.classList.add('active');
-                } else {
-                    child.classList.remove('active');
-                }
-            });
+            const items = _getWheelItems(wheel);
+            if (!items.length) return;
+            _finalizeWheelAfterScroll(wheel);
         }
 
         function attachScrollSnapping() {
             const wheels = ['h-wheel', 'm-wheel', 'd-wheel', 'p-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
             wheels.forEach(id => {
                 const w = document.getElementById(id);
-                if (w) w.scrollTop = 1; // Trigger initial calculation
+                if (w) handleWheelSnap(w);
             });
-        }
-
-        function initClickRadar() {
-            const appRoot = document.getElementById('app-ui');
-            document.addEventListener('pointerdown', (evt) => {
-                if (evt.button !== 0 || !evt.isPrimary) return;
-                if (appRoot && !appRoot.contains(evt.target)) return;
-
-                const ring = document.createElement('span');
-                ring.className = 'click-radar';
-                ring.style.left = `${evt.clientX}px`;
-                ring.style.top = `${evt.clientY}px`;
-                document.body.appendChild(ring);
-                ring.addEventListener('animationend', () => {
-                    try { if (ring.parentNode) ring.parentNode.removeChild(ring); } catch (e) {}
-                }, { once: true });
-            }, { passive: true });
         }
 
         function initNightSky() {
@@ -3285,11 +3511,22 @@
         function _scrollWheelToValue(wheelId, value) {
             const wheel = document.getElementById(wheelId);
             if (!wheel) return;
-            const target = Array.from(wheel.querySelectorAll('div')).find(el => el.textContent.trim() === String(value));
-            if (!target) return;
-            const offset = target.offsetTop - ((wheel.clientHeight - target.clientHeight) / 2);
-            wheel.scrollTop = Math.max(0, offset);
-            handleWheelSnap(wheel);
+            const items = _getWheelItems(wheel);
+            const allMatches = items.filter(el => String(el.dataset.wheelValue || el.textContent || '').trim() === String(value));
+            if (!allMatches.length) return;
+            const middleStart = Number(wheel.dataset.wheelMiddleStart);
+            let target = allMatches[0];
+            if (Number.isFinite(middleStart)) {
+                target = allMatches.reduce((best, current) => {
+                    const bestIdx = items.indexOf(best);
+                    const curIdx = items.indexOf(current);
+                    if (bestIdx < 0) return current;
+                    if (curIdx < 0) return best;
+                    return Math.abs(curIdx - middleStart) < Math.abs(bestIdx - middleStart) ? current : best;
+                }, allMatches[0]);
+            }
+            _centerWheelOnItem(wheel, target, 'auto');
+            _setWheelActiveItem(wheel, target);
         }
 
         function _resetTimerPickerToZero() {
@@ -3352,8 +3589,10 @@
 
             const selectedDays = _getRepeatDaysForAlarm(index);
             if (Array.isArray(selectedDays) && selectedDays.length > 0) {
-                const firstDay = DAY_LABELS[selectedDays[0]];
-                _scrollWheelToValue('d-wheel', firstDay);
+                const dayLabel = selectedDays.length === 7
+                    ? EVERY_DAY_LABEL
+                    : DAY_LABELS[selectedDays[0]];
+                _scrollWheelToValue('d-wheel', dayLabel);
             }
             selectedAlarmType = (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine';
             setAlarmType(selectedAlarmType);
@@ -3385,7 +3624,10 @@
                 _scrollWheelToValue('p-wheel', restored.hh >= 12 ? 'PM' : 'AM');
             }
             const restoredDays = _getRepeatDaysForAlarm(idx);
-            _scrollWheelToValue('d-wheel', DAY_LABELS[restoredDays[0] ?? 0]);
+            const restoredDayLabel = Array.isArray(restoredDays) && restoredDays.length === 7
+                ? EVERY_DAY_LABEL
+                : DAY_LABELS[restoredDays[0] ?? 0];
+            _scrollWheelToValue('d-wheel', restoredDayLabel);
             selectedAlarmType = (alarmTypes && alarmTypes[idx]) ? alarmTypes[idx] : 'routine';
             setAlarmType(selectedAlarmType);
 
@@ -3497,18 +3739,21 @@
                 const nameTextDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 const isExpanded = _expandedAlarmIndex === i;
                 return `
-                <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
-                        ${isRenaming
-                            ? `<input type="text" class="alarm-name-input" data-alarm-idx="${i}" value="${alarmName.replace(/"/g, '&quot;')}" maxlength="40" style="flex:1; min-width:0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; ${nameTextDisabledStyle}">`
-                            : `<div class="alarm-name-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; font-weight:900; color:rgba(255,255,255,0.72); ${nameTextDisabledStyle}">${alarmName}</div>`
-                        }
-                        <button class="alarm-rename-btn" data-alarm-idx="${i}" aria-label="Rename alarm" title="Rename alarm" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:none; border-radius:8px; background:rgba(255,255,255,0.06); color:#dbe9ff; cursor:pointer;">
-                            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
-                                <path d="M12 20h9"></path>
-                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
-                            </svg>
-                        </button>
+                <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:18px;">
+                    <div class="alarm-name-row" style="${contentDisabledStyle}">
+                        <span class="alarm-name-main">
+                            ${isRenaming
+                                ? `<input type="text" class="alarm-name-input" data-alarm-idx="${i}" value="${alarmName.replace(/"/g, '&quot;')}" maxlength="40" style="flex:1; min-width:0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; ${nameTextDisabledStyle}">`
+                                : `<div class="alarm-name-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; font-weight:900; color:rgba(255,255,255,0.72); ${nameTextDisabledStyle}">${alarmName}</div>`
+                            }
+                            <button class="alarm-rename-btn" data-alarm-idx="${i}" aria-label="Rename alarm" title="Rename alarm" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:none; border-radius:8px; background:rgba(255,255,255,0.06); color:#dbe9ff; cursor:pointer;">
+                                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
+                                    <path d="M12 20h9"></path>
+                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+                                </svg>
+                            </button>
+                        </span>
+                        <button class="alarm-type-toggle" data-alarm-idx="${i}" style="color:${typeColor}; opacity:0.95;">${typeLabel}</button>
                     </div>
                     <div class="alarm-time-row" style="${contentDisabledStyle}">
                         <span class="alarm-time-main">
@@ -3516,7 +3761,6 @@
                             <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
                         </span>
                         <span class="alarm-time-right">
-                            <button class="alarm-type-toggle" data-alarm-idx="${i}" style="color:${typeColor}; opacity:0.95;">${typeLabel}</button>
                             <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
                                 <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
                             </button>
@@ -3529,8 +3773,14 @@
                     </div>
                     <div class="alarm-details ${isExpanded ? 'open' : ''}" style="${contentDisabledStyle}">
                         <div class="alarm-controls-row">
-                            <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
-                            <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
+                            <button class="alarm-edit-btn" data-alarm-idx="${i}"><span class="alarm-edit-label">Edit</span></button>
+                            <button class="alarm-delete-btn" data-alarm-idx="${i}" aria-label="Delete alarm" title="Delete alarm" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M8 6V4h8v2"></path>
+                                    <path d="M7 6l1 14h8l1-14"></path>
+                                </svg>
+                            </button>
                         </div>
                         <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
                             <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
@@ -3697,11 +3947,15 @@
             const h = document.querySelector('#h-wheel .active')?.innerText || "6";
             const m = document.querySelector('#m-wheel .active')?.innerText || "00";
             const p = document.querySelector('#p-wheel .active')?.innerText || "AM";
-            const d = document.querySelector('#d-wheel .active')?.innerText || "Everyday";
+            const d = document.querySelector('#d-wheel .active')?.dataset.wheelValue
+                || document.querySelector('#d-wheel .active')?.innerText
+                || EVERY_DAY_LABEL;
             
             const newAlarm = `${h}:${m} ${p}`;
             const parsedDay = DAY_LABELS.findIndex(label => label === d);
-            const selectedDaysForCreate = parsedDay >= 0 ? [parsedDay] : [...ALL_DAY_INDICES];
+            const selectedDaysForCreate = (d === EVERY_DAY_LABEL || d === 'Everyday' || parsedDay < 0)
+                ? [...ALL_DAY_INDICES]
+                : [parsedDay];
             const normalizedDays = _normalizeRepeatDays(selectedDaysForCreate);
             const normalizedType = selectedAlarmType === 'regular' ? 'regular' : 'routine';
             const editing = Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
@@ -3899,14 +4153,24 @@
             app.style.backgroundPosition = '';
             app.style.backgroundRepeat = '';
             app.style.backgroundColor = '';
+            bodyEl.style.backgroundImage = '';
+            bodyEl.style.backgroundSize = '';
+            bodyEl.style.backgroundPosition = '';
+            bodyEl.style.backgroundRepeat = '';
+            bodyEl.style.backgroundColor = '';
 
             if (opt.type === 'image') {
                 app.style.backgroundImage = `url('${opt.value}')`;
                 app.style.backgroundSize = 'cover';
                 app.style.backgroundPosition = 'center';
                 app.style.backgroundRepeat = 'no-repeat';
+                bodyEl.style.backgroundImage = `url('${opt.value}')`;
+                bodyEl.style.backgroundSize = 'cover';
+                bodyEl.style.backgroundPosition = 'center';
+                bodyEl.style.backgroundRepeat = 'no-repeat';
             } else if (opt.type === 'color') {
                 app.style.backgroundColor = opt.value;
+                bodyEl.style.backgroundColor = opt.value;
             }
 
             bodyEl.classList.remove('theme-dark', 'theme-light');
@@ -5476,6 +5740,7 @@
             if (name === 'stopwatch') document.getElementById('tab-stopwatch')?.classList.add('active');
             if (name === 'sounds') document.getElementById('tab-sounds')?.classList.add('active');
             if (name === 'background') document.getElementById('tab-background')?.classList.add('active');
+            requestAnimationFrame(() => requestAnimationFrame(_refreshAllPickerWheels));
         }
 
         (function initTabs(){
@@ -5605,17 +5870,10 @@
         function getWheelValue(wheelId) {
             const wheel = document.getElementById(wheelId);
             if (!wheel) return 0;
-            const children = wheel.querySelectorAll('div');
-            const centerPoint = wheel.scrollTop + (wheel.clientHeight / 2);
-            
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
-                const childCenter = child.offsetTop + (child.clientHeight / 2);
-                if (Math.abs(centerPoint - childCenter) < 25) {
-                    return child.textContent ? parseInt(child.textContent) || 0 : 0;
-                }
-            }
-            return 0;
+            const activeItem = wheel.querySelector('.wheel-item.active') || _getWheelCenteredItem(wheel);
+            if (!activeItem) return 0;
+            const rawValue = String(activeItem.dataset.wheelValue || activeItem.textContent || '').trim();
+            return Number.parseInt(rawValue, 10) || 0;
         }
 
         function createTimer() {
@@ -5883,7 +6141,7 @@
                     pickerContainer.appendChild(label);
                     extendContainer.appendChild(extendBtn);
                     extendContainer.appendChild(pickerContainer);
-
+ 
                     btnRow.appendChild(stopBtn);
                     btnRow.appendChild(extendContainer);
 
@@ -5920,7 +6178,7 @@
         }
         document.getElementById('create-timer-btn')?.addEventListener('click', createTimer);
         
-        let _sw_running = false, _sw_start=0, _sw_elapsed=0, _sw_tick=null, _sw_laps=[];
+        let _sw_running = false, _sw_start=0, _sw_elapsed=0, _sw_tick=null;
         function _sw_fmt(n){
             const cent = Math.floor((n%1000)/10).toString().padStart(2,'0');
             const s = Math.floor(n/1000);
@@ -5932,8 +6190,6 @@
             const disp = document.getElementById('sw-display'); if(!disp) return;
             const now = _sw_elapsed + (_sw_running ? (Date.now()-_sw_start) : 0);
             disp.textContent = _sw_fmt(now);
-            const lapsEl = document.getElementById('sw-laps');
-            if (lapsEl) lapsEl.innerHTML = _sw_laps.map((l,i)=>`<div style="display:flex;justify-content:space-between;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)"><div>Lap ${i+1}</div><div>${_sw_fmt(l)}</div></div>`).join('');
         }
         function _sw_startstop(){
             if (_sw_running) {
@@ -5948,10 +6204,8 @@
             _sw_render();
             saveState();
         }
-        function _sw_lap(){ const now = _sw_elapsed + (_sw_running ? (Date.now()-_sw_start) : 0); _sw_laps.unshift(now); _sw_render(); saveState(); try{ const stop=_startBeep(); setTimeout(()=>{ stop(); _stopAllBeeps(); },160);}catch(e){} }
-        function _sw_reset(){ _sw_running=false; clearInterval(_sw_tick); _sw_tick=null; _sw_elapsed=0; _sw_start=0; _sw_laps=[]; document.getElementById('sw-start').textContent='Start'; _sw_render(); saveState(); }
+        function _sw_reset(){ _sw_running=false; clearInterval(_sw_tick); _sw_tick=null; _sw_elapsed=0; _sw_start=0; document.getElementById('sw-start').textContent='Start'; _sw_render(); saveState(); }
         document.getElementById('sw-start')?.addEventListener('click', _sw_startstop);
-        document.getElementById('sw-lap')?.addEventListener('click', _sw_lap);
         document.getElementById('sw-reset')?.addEventListener('click', _sw_reset);
     </script>
     
