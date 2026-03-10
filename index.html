@@ -1604,7 +1604,7 @@
         }
 
         .day-active #stage { background: var(--sky-day); }
-        .day-active .sun-system { transform: translate(-50%, -100px); }
+        .day-active .sun-system { transform: translate(-50%, 38px); }
         #body:not(.day-active) .cloud-container {
             opacity: 0;
             transform: translate3d(0, -120%, 0);
@@ -1763,6 +1763,63 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
+        }
+        .sky-mode-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding: 8px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+        }
+        .sky-mode-switch-label {
+            min-width: 56px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .sky-mode-switch-track {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            padding: 4px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.18);
+        }
+        .sky-mode-switch-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: transparent;
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+        .sky-mode-switch-btn.active {
+            background: rgba(255,255,255,0.14);
+            color: var(--text-primary);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+        }
+        .sky-mode-switch-btn .sky-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         .settings-stack {
             display: flex;
@@ -2129,17 +2186,17 @@
         .home-analog-hand.hour::before {
             width: 48%;
             height: 4px;
-            background: linear-gradient(90deg, #ffec98 0%, #e0b52d 52%, #9e6e00 100%);
+            background: linear-gradient(90deg, #ffe7a8 0%, #d4a93a 56%, #8e6407 100%);
         }
         .home-analog-hand.minute::before {
-            width: 60%;
+            width: 74%;
             height: 3px;
-            background: linear-gradient(90deg, #fff0a9 0%, #efc64a 56%, #ad7a00 100%);
+            background: linear-gradient(90deg, #dff5ff 0%, #8fcdf0 58%, #3c79a6 100%);
         }
         .home-analog-hand.second::before {
-            width: 70%;
+            width: 88%;
             height: 2px;
-            background: linear-gradient(90deg, #fff7c8 0%, #f5d96e 54%, #bc8a0a 100%);
+            background: linear-gradient(90deg, #ffd3bf 0%, #ff8a5c 56%, #d84f1f 100%);
             box-shadow: 0 0 0 1px rgba(10,18,28,0.45), 0 3px 8px rgba(0,0,0,0.4);
         }
         .home-analog-dot {
@@ -2653,6 +2710,7 @@
                 </div>
                 <div class="settings-block">
                     <p class="settings-title">Background</p>
+                    <div id="sky-mode-switch"></div>
                     <div id="background-options" class="background-options"></div>
                 </div>
             </div>
@@ -2795,12 +2853,14 @@
 
         let selectedSound = DEFAULT_SOUND_ID; // default sound
         const DEFAULT_BACKGROUND_ID = 'black-bg';
+        const DEFAULT_SKY_MODE = 'night';
         const BACKGROUND_OPTIONS = [
             { id: 'black-bg', name: 'Black With Background', type: 'stage-night', theme: 'dark' },
             { id: 'white-bg', name: 'White With Background', type: 'stage-day', theme: 'light' },
             { id: 'no-bg', name: 'No Background', type: 'fullscreen-none', theme: 'dark' }
         ];
         let selectedBackground = DEFAULT_BACKGROUND_ID;
+        let selectedSkyMode = DEFAULT_SKY_MODE;
         let _backgroundAnimationsEnabled = true;
         let _birdsLoopTimeout = null;
         let _cloudRafId = null;
@@ -2826,6 +2886,11 @@
         let _lastAlarmCommitAt = 0;
         let _lastAlarmCommitPayload = '';
         let _setAlarmLocked = false;
+        let _nativeNotificationSyncTimer = null;
+        let _nativeNotificationsPermissionRequested = false;
+        let _nativeNotificationListenersBound = false;
+        const NATIVE_ALARM_NOTIFICATION_ID_BASE = 910000;
+        const NATIVE_ALARM_SOUND_FILE = 'The_Gilded_Minuet (mp3cut.net).wav';
         const MAX_ALARMS = 10;
         const MAX_ACTIVE_TIMERS = 5;
         const MAX_TIMER_HISTORY = 10;
@@ -3251,6 +3316,124 @@
             textEl.textContent = `${_formatNextAlarmRemaining(minMs)} until ${alarms[minIdx]}`;
         }
 
+        function _getLocalNotificationsPlugin() {
+            try {
+                if (!window.Capacitor || typeof window.Capacitor.isNativePlatform !== 'function') return null;
+                if (!window.Capacitor.isNativePlatform()) return null;
+                const plugin = window.Capacitor?.Plugins?.LocalNotifications || null;
+                return plugin;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function _ensureNativeNotificationPermission() {
+            const plugin = _getLocalNotificationsPlugin();
+            if (!plugin) return false;
+            try {
+                const current = typeof plugin.checkPermissions === 'function'
+                    ? await plugin.checkPermissions()
+                    : null;
+                if (current?.display === 'granted') return true;
+
+                if (!_nativeNotificationsPermissionRequested || current?.display !== 'granted') {
+                    _nativeNotificationsPermissionRequested = true;
+                    const requested = await plugin.requestPermissions();
+                    return requested?.display === 'granted';
+                }
+
+                return false;
+            } catch (e) {
+                console.warn('LocalNotifications permission request failed', e);
+                return false;
+            }
+        }
+
+        function _buildNextNativeAlarmNotifications() {
+            const notifications = [];
+            for (let i = 0; i < alarms.length; i += 1) {
+                if (Array.isArray(alarmEnabled) && alarmEnabled[i] === false) continue;
+                const ms = _timeUntilAlarm(alarms[i], i);
+                if (!Number.isFinite(ms) || ms <= 0) continue;
+                const when = new Date(Date.now() + ms);
+                const alarmName = _normalizeAlarmName(alarmNames[i], i);
+                notifications.push({
+                    id: NATIVE_ALARM_NOTIFICATION_ID_BASE + i,
+                    title: alarmName || 'Alarm',
+                    body: `It is ${alarms[i]}`,
+                    schedule: { at: when },
+                    sound: NATIVE_ALARM_SOUND_FILE,
+                    extra: {
+                        type: 'alarm',
+                        alarmIndex: i,
+                        alarmTime: alarms[i],
+                        alarmType: (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine'
+                    }
+                });
+            }
+            return notifications;
+        }
+
+        async function registerNativeAlarmNotificationListeners() {
+            const plugin = _getLocalNotificationsPlugin();
+            if (!plugin || _nativeNotificationListenersBound || typeof plugin.addListener !== 'function') return;
+
+            _nativeNotificationListenersBound = true;
+
+            try {
+                await plugin.addListener('localNotificationReceived', (notification) => {
+                    const extra = notification?.extra || {};
+                    if (extra?.type !== 'alarm') return;
+                    queueNativeAlarmNotificationSync();
+                });
+
+                await plugin.addListener('localNotificationActionPerformed', (event) => {
+                    const extra = event?.notification?.extra || {};
+                    if (extra?.type !== 'alarm') return;
+                    queueNativeAlarmNotificationSync();
+                });
+            } catch (e) {
+                _nativeNotificationListenersBound = false;
+                console.warn('Failed to register native notification listeners', e);
+            }
+        }
+
+        async function syncNativeAlarmNotifications() {
+            const plugin = _getLocalNotificationsPlugin();
+            if (!plugin) return;
+            const allowed = await _ensureNativeNotificationPermission();
+            if (!allowed) return;
+            try {
+                await plugin.cancel({
+                    notifications: Array.from({ length: Math.max(alarms.length, MAX_ALARMS) }, (_, i) => ({
+                        id: NATIVE_ALARM_NOTIFICATION_ID_BASE + i
+                    }))
+                });
+                const notifications = _buildNextNativeAlarmNotifications();
+                if (notifications.length) {
+                    await plugin.schedule({ notifications });
+                }
+            } catch (e) {
+                console.warn('syncNativeAlarmNotifications failed', e);
+            }
+        }
+
+        function queueNativeAlarmNotificationSync() {
+            if (_nativeNotificationSyncTimer) {
+                clearTimeout(_nativeNotificationSyncTimer);
+                _nativeNotificationSyncTimer = null;
+            }
+            _nativeNotificationSyncTimer = setTimeout(() => {
+                _nativeNotificationSyncTimer = null;
+                syncNativeAlarmNotifications();
+            }, 220);
+        }
+
+        function initializeNativeAlarmNotifications() {
+            registerNativeAlarmNotificationListeners();
+            queueNativeAlarmNotificationSync();
+        }
+
         function queueAlarmMutation(mutator, opts = {}) {
             const { render = true, save = true, renderReason = 'queued-mutation' } = opts;
             _alarmMutationPendingCount += 1;
@@ -3373,6 +3556,7 @@
                     maxRoutineAlarms: _normalizeRoutineAlarmLimit(maxRoutineAlarms),
                     selectedSound: String(selectedSound || DEFAULT_SOUND_ID),
                     selectedBackground: String(selectedBackground || DEFAULT_BACKGROUND_ID),
+                    selectedSkyMode: selectedSkyMode === 'day' ? 'day' : DEFAULT_SKY_MODE,
                     customSounds,
                     timers: _serializeTimersForState(),
                     previousTimerHistory: Array.isArray(previousTimerHistory)
@@ -3425,6 +3609,7 @@
                 const swBtn = document.getElementById('sw-start');
                 if (swBtn) swBtn.textContent = 'Start';
                 selectedBackground = DEFAULT_BACKGROUND_ID;
+                selectedSkyMode = DEFAULT_SKY_MODE;
                 applyBackground(selectedBackground, false);
                 return;
             }
@@ -3485,6 +3670,7 @@
             selectedSound = soundExists ? state.selectedSound : DEFAULT_SOUND_ID;
             const bgExists = BACKGROUND_OPTIONS.some(bg => bg.id === state.selectedBackground);
             selectedBackground = bgExists ? state.selectedBackground : DEFAULT_BACKGROUND_ID;
+            selectedSkyMode = state.selectedSkyMode === 'day' ? 'day' : DEFAULT_SKY_MODE;
             applyBackground(selectedBackground, false);
 
             _timers.splice(0, _timers.length);
@@ -3553,6 +3739,7 @@
             renderBackgroundOptions();
             _renderTimers();
             _renderPreviousTimers();
+            initializeNativeAlarmNotifications();
             _sw_render();
             attachScrollSnapping();
             initNightSky();
@@ -4916,6 +5103,7 @@
             }
             setAlarmType(selectedAlarmType, { save: false });
             _updateNextAlarmSummary();
+            queueNativeAlarmNotificationSync();
         }
 
         function toggleAlarmDetails(index) {
@@ -5286,6 +5474,7 @@
         }
 
         function renderBackgroundOptions() {
+            renderSkyModeSwitch();
             const container = document.getElementById('background-options');
             if (!container) return;
 
@@ -5296,9 +5485,61 @@
             `).join('');
         }
 
+        function renderSkyModeSwitch() {
+            const container = document.getElementById('sky-mode-switch');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="sky-mode-switch">
+                    <span class="sky-mode-switch-label">Scene</span>
+                    <div class="sky-mode-switch-track" role="tablist" aria-label="Background scene">
+                        <button
+                            class="sky-mode-switch-btn ${selectedSkyMode === 'night' ? 'active' : ''}"
+                            type="button"
+                            role="tab"
+                            aria-selected="${selectedSkyMode === 'night'}"
+                            onclick="selectSkyMode('night')"
+                        >
+                            <svg class="sky-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5Z"></path>
+                            </svg>
+                            <span>Moon</span>
+                        </button>
+                        <button
+                            class="sky-mode-switch-btn ${selectedSkyMode === 'day' ? 'active' : ''}"
+                            type="button"
+                            role="tab"
+                            aria-selected="${selectedSkyMode === 'day'}"
+                            onclick="selectSkyMode('day')"
+                        >
+                            <svg class="sky-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="4.5"></circle>
+                                <path d="M12 2.5v2.5"></path>
+                                <path d="M12 19v2.5"></path>
+                                <path d="m4.9 4.9 1.8 1.8"></path>
+                                <path d="m17.3 17.3 1.8 1.8"></path>
+                                <path d="M2.5 12H5"></path>
+                                <path d="M19 12h2.5"></path>
+                                <path d="m4.9 19.1 1.8-1.8"></path>
+                                <path d="m17.3 6.7 1.8-1.8"></path>
+                            </svg>
+                            <span>Sun</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         function selectBackground(backgroundId) {
             applyBackground(backgroundId, true);
             renderBackgroundOptions();
+        }
+
+        function selectSkyMode(mode, persist = true) {
+            selectedSkyMode = mode === 'day' ? 'day' : DEFAULT_SKY_MODE;
+            _syncSkyMode();
+            renderSkyModeSwitch();
+            if (persist) saveState();
         }
 
         function renderSoundOptions() {
@@ -5478,7 +5719,7 @@
         }
 
         function _syncSkyMode() {
-            if (_routineDayModeActive || _inRoutineSession) {
+            if (selectedSkyMode === 'day') {
                 setSunUp({ force: true });
             } else {
                 setSunDown();
@@ -6566,6 +6807,7 @@
                 try { renderAlarms(); } catch (e) {}
                 try { saveState(); } catch (e) {}
             }
+            queueNativeAlarmNotificationSync();
 
             _currentRingingIndexes.push(index);
             _scheduleAlarmAutoStop(index);
