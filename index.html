@@ -48,11 +48,11 @@
         }
 
         
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -64,14 +64,14 @@
             overflow: hidden;
         }
 
-        body { 
-            height: 100vh; 
+        body {
+            height: 100vh;
             min-height: 100dvh;
             max-height: 100dvh;
             width: 100vw;
-            overflow: hidden; 
-            background: #000; 
-            color: var(--text-primary); 
+            overflow: hidden;
+            background: #000;
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             position: fixed;
@@ -500,7 +500,7 @@
             padding: 0 0 calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
             overflow-x: hidden;
-            z-index: 100; 
+            z-index: 100;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
@@ -641,10 +641,10 @@
             border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        h2 { 
-            font-size: 42px; 
-            font-weight: 900; 
-            margin-bottom: 28px; 
+        h2 {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 28px;
             letter-spacing: -2px;
             color: var(--text-primary);
             line-height: 1;
@@ -708,13 +708,13 @@
             border: 1px solid rgba(255,255,255,0.03);
             position: relative;
         }
-        .item:hover { 
-            background: rgba(255,255,255,0.09); 
-            transform: scale(1.03) translateX(5px); 
+        .item:hover {
+            background: rgba(255,255,255,0.09);
+            transform: scale(1.03) translateX(5px);
             border-color: rgba(255,255,255,0.15);
         }
-        .item.checked { 
-            background: rgba(48, 209, 88, 0.15); 
+        .item.checked {
+            background: rgba(48, 209, 88, 0.15);
             border-color: rgba(48, 209, 88, 0.3);
         }
         .item.completing {
@@ -909,10 +909,10 @@
             cursor: ew-resize;
         }
         .wheel::-webkit-scrollbar { display: none; }
-        .wheel div { 
-            height: 40px; 
-            line-height: 40px; 
-            text-align: center; 
+        .wheel div {
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
             font-size: 24px;
             color: var(--text-secondary);
             transition: color 0.12s ease, transform 0.12s ease;
@@ -1439,6 +1439,14 @@
         
         @keyframes rotate-sun { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes rotate-sun-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes button-bounce-click {
+            0% { transform: scale(1); }
+            22% { transform: scale(1.12); }
+            42% { transform: scale(0.93); }
+            68% { transform: scale(1.06); }
+            84% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
         @keyframes sun-pulse {
             0% { transform: scale(1); opacity: 0.6; }
             100% { transform: scale(1.4); opacity: 0.9; }
@@ -1515,17 +1523,17 @@
         @keyframes bird-flap-seq {
             
             0%, 2% { transform: rotate(-6deg) translateY(0); }
-            4% { transform: rotate(34deg) translateY(-0.6px); }   
+            4% { transform: rotate(34deg) translateY(-0.6px); }
             8% { transform: rotate(-6deg) translateY(0.3px); }
-            12% { transform: rotate(34deg) translateY(-0.6px); }  
+            12% { transform: rotate(34deg) translateY(-0.6px); }
             16% { transform: rotate(-6deg) translateY(0.3px); }
-            20% { transform: rotate(34deg) translateY(-0.6px); }  
-            24%, 41% { transform: rotate(-2deg) translateY(0); }  
-            45% { transform: rotate(34deg) translateY(-0.6px); }  
-            49%, 66% { transform: rotate(-2deg) translateY(0); }  
-            72% { transform: rotate(34deg) translateY(-0.6px); }  
+            20% { transform: rotate(34deg) translateY(-0.6px); }
+            24%, 41% { transform: rotate(-2deg) translateY(0); }
+            45% { transform: rotate(34deg) translateY(-0.6px); }
+            49%, 66% { transform: rotate(-2deg) translateY(0); }
+            72% { transform: rotate(34deg) translateY(-0.6px); }
             78% { transform: rotate(-6deg) translateY(0.3px); }
-            84% { transform: rotate(34deg) translateY(-0.6px); }  
+            84% { transform: rotate(34deg) translateY(-0.6px); }
             90%, 100% { transform: rotate(-6deg) translateY(0); }
         }
 
@@ -1755,6 +1763,9 @@
         }
         button:active {
             filter: brightness(0.92);
+        }
+        button.btn-bounce-click {
+            animation: button-bounce-click 440ms cubic-bezier(0.22, 0.8, 0.28, 1);
         }
         
         .glass-card.aux { padding: 22px; max-width: 640px; }
@@ -2763,10 +2774,10 @@
         const DEFAULT_SOUND_ID = 'sunrise-chimes';
         const BASE_SOUND_OPTIONS = [
             { id: 'sunrise-chimes', name: 'Default', description: 'Fast wake groove with bright marimba lead and clean pulse.' },
-            { id: 'pop-bright', name: 'Pop', description: 'Catchy pop groove — clean, upbeat, and distinct', audioUrl: 'sounds/pop-bright.m4r' },
-            { id: 'smooth-jazz', name: 'Jazz', description: 'Warm jazz groove — upright bass and soft electric piano', audioUrl: 'sounds/smooth-jazz.m4r' },
-            { id: 'electric-drive', name: 'Classical', description: 'Energetic electronic pulse with sharp synth hits', audioUrl: 'sounds/electric-drive.m4r' },
-            { id: 'lofi-sunrise', name: 'Lo-Fi', description: 'Warm lo-fi chords, soft vinyl texture, gentle beat', audioUrl: 'sounds/lofi-sunrise.m4r' }
+            { id: 'pop-bright', name: 'Neon Pulse', description: 'Bright electronic pulse with a sharper modern edge.', audioUrl: 'sounds/Neon_Pulse.mp3' },
+            { id: 'smooth-jazz', name: 'Grand Ballroom Strut', description: 'A lively ballroom groove with a swinging feel.', audioUrl: 'sounds/Grand_Ballroom_Strut.mp3' },
+            { id: 'electric-drive', name: 'The Gilded Minuet', description: 'A polished classical march with ornate movement.', audioUrl: 'sounds/The_Gilded_Minuet.mp3' },
+            { id: 'lofi-sunrise', name: 'Cobblestone Dreams', description: 'A softer drifting track with a relaxed late-night tone.', audioUrl: 'sounds/Cobblestone_Dreams.mp3' }
         ];
         const ALARM_SOUND_PROFILES = {
             'sunrise-chimes': {
@@ -2890,7 +2901,7 @@
         let _nativeNotificationsPermissionRequested = false;
         let _nativeNotificationListenersBound = false;
         const NATIVE_ALARM_NOTIFICATION_ID_BASE = 910000;
-        const NATIVE_ALARM_SOUND_FILE = 'The_Gilded_Minuet (mp3cut.net).wav';
+        const NATIVE_ALARM_SOUND_FILE = 'alarm.wav';
         const MAX_ALARMS = 10;
         const MAX_ACTIVE_TIMERS = 5;
         const MAX_TIMER_HISTORY = 10;
@@ -3426,6 +3437,10 @@
             _nativeNotificationSyncTimer = setTimeout(() => {
                 _nativeNotificationSyncTimer = null;
                 syncNativeAlarmNotifications();
+                const plugin = _getLocalNotificationsPlugin();
+                if (plugin && plugin.getPending) {
+                    plugin.getPending().then(console.log).catch(console.warn);
+                }
             }, 220);
         }
 
@@ -3779,6 +3794,14 @@
 
         };
 
+        document.addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+            button.classList.remove('btn-bounce-click');
+            void button.offsetWidth;
+            button.classList.add('btn-bounce-click');
+        });
+
         window.addEventListener('beforeunload', () => {
             saveState();
         });
@@ -3859,8 +3882,8 @@
             const video = document.getElementById('video');
             
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
                 });
                 video.srcObject = stream;
             } catch (err) {
@@ -5547,8 +5570,8 @@
             container.innerHTML = `
                 <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
                     <button class="btn-add" onclick="importSoundPrompt()">Import Sound</button>
-                    <small style="color:var(--text-secondary);">Import an audio file (.m4r)</small>
-                    <input id="sound-file-input" type="file" accept=".m4r" style="display:none" onchange="handleSoundFileInput(event)">
+                    <small style="color:var(--text-secondary);">Import an audio file (.mp3 or .m4r)</small>
+                    <input id="sound-file-input" type="file" accept=".mp3,.m4r,audio/mpeg,audio/mp4" style="display:none" onchange="handleSoundFileInput(event)">
                 </div>
             `;
 
@@ -5581,8 +5604,8 @@
             if (!file) return;
             const name = file.name || '';
             const lc = name.toLowerCase();
-            if (!lc.endsWith('.m4r')) {
-                alert('Only .m4r files are allowed. Please select a .m4r ringtone file.');
+            if (!lc.endsWith('.m4r') && !lc.endsWith('.mp3')) {
+                alert('Only .mp3 and .m4r files are allowed. Please select a supported audio file.');
                 try { evt.target.value = ''; } catch (e) {}
                 return;
             }
@@ -6801,12 +6824,6 @@
 
         function _ringAlarm(index) {
             const repeatDays = _getRepeatDaysForAlarm(index);
-            const shouldAutoDisableAfterRing = !Array.isArray(repeatDays) || repeatDays.length === 0;
-            if (shouldAutoDisableAfterRing && Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length && alarmEnabled[index] !== false) {
-                alarmEnabled[index] = false;
-                try { renderAlarms(); } catch (e) {}
-                try { saveState(); } catch (e) {}
-            }
             queueNativeAlarmNotificationSync();
 
             _currentRingingIndexes.push(index);
@@ -7058,7 +7075,7 @@
             try { _checkAlarms(); } catch (e) { console.warn(e); }
             setInterval(() => {
                 try { _checkAlarms(); } catch (e) { console.warn(e); }
-            }, 10000); // 10s granularity is sufficient (alarms match minute)
+            }, 1000); // 1s granularity is sufficient (alarms match minute)
         }
 
         if (document.readyState === 'complete') {
