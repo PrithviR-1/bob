@@ -48,11 +48,11 @@
         }
 
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -64,14 +64,14 @@
             overflow: hidden;
         }
 
-        body {
-            height: 100vh;
+        body { 
+            height: 100vh; 
             min-height: 100dvh;
             max-height: 100dvh;
             width: 100vw;
-            overflow: hidden;
-            background: #000;
-            color: var(--text-primary);
+            overflow: hidden; 
+            background: #000; 
+            color: var(--text-primary); 
             display: flex;
             justify-content: center;
             position: fixed;
@@ -97,7 +97,7 @@
         
         .sun-system {
             position: absolute;
-            top: 11%;
+            top: 20.3%;
             left: 50%;
             width: 116px;
             height: 116px;
@@ -203,7 +203,7 @@
             background: radial-gradient(circle, rgba(255, 218, 120, 0.58) 0%, rgba(255, 196, 84, 0.34) 40%, rgba(255, 166, 52, 0.1) 68%, rgba(255, 166, 52, 0) 100%);
             filter: blur(10px);
             opacity: 0.9;
-            animation: sun-pulse 5s ease-in-out infinite alternate;
+            animation: sun-pulse 9s ease-in-out infinite alternate;
             pointer-events: none;
             z-index: 1;
         }
@@ -216,7 +216,7 @@
             background: radial-gradient(circle, rgba(255, 222, 145, 0.24) 0%, rgba(255, 206, 110, 0.14) 35%, rgba(255, 186, 88, 0.05) 58%, rgba(255, 186, 88, 0) 100%);
             filter: blur(20px);
             opacity: 0.72;
-            animation: sun-pulse 6.4s ease-in-out infinite alternate;
+            animation: sun-pulse 11s ease-in-out infinite alternate;
             pointer-events: none;
             z-index: 0;
         }
@@ -232,7 +232,7 @@
             opacity: 0.96;
             transform-origin: 100px 100px;
             transform-box: view-box;
-            animation: rotate-sun 30s linear infinite;
+            animation: rotate-sun 60s linear infinite;
             will-change: transform;
         }
 
@@ -500,7 +500,7 @@
             padding: 0 0 calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
             overflow-x: hidden;
-            z-index: 100;
+            z-index: 100; 
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
@@ -513,7 +513,7 @@
             top: calc(62px + env(safe-area-inset-top));
             left: 50%;
             transform: translateX(-50%) translateY(-12px);
-            z-index: 1200;
+            z-index: 10050;
             background: rgba(12, 20, 32, 0.9);
             border: 1px solid rgba(255,255,255,0.2);
             color: #f5f8ff;
@@ -641,10 +641,10 @@
             border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        h2 {
-            font-size: 42px;
-            font-weight: 900;
-            margin-bottom: 28px;
+        h2 { 
+            font-size: 42px; 
+            font-weight: 900; 
+            margin-bottom: 28px; 
             letter-spacing: -2px;
             color: var(--text-primary);
             line-height: 1;
@@ -708,13 +708,13 @@
             border: 1px solid rgba(255,255,255,0.03);
             position: relative;
         }
-        .item:hover {
-            background: rgba(255,255,255,0.09);
-            transform: scale(1.03) translateX(5px);
+        .item:hover { 
+            background: rgba(255,255,255,0.09); 
+            transform: scale(1.03) translateX(5px); 
             border-color: rgba(255,255,255,0.15);
         }
-        .item.checked {
-            background: rgba(48, 209, 88, 0.15);
+        .item.checked { 
+            background: rgba(48, 209, 88, 0.15); 
             border-color: rgba(48, 209, 88, 0.3);
         }
         .item.completing {
@@ -838,38 +838,49 @@
         .alarm-picker-control-row {
             display: flex;
             flex-wrap: nowrap;
-            gap: 8px;
+            gap: 0;
             justify-content: center;
+            border: 1px solid rgba(255,255,255,0.26);
+            border-radius: 22px;
+            background: rgba(255,255,255,0.04);
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
         }
         #alarm-day-row {
-            gap: 4px;
-            justify-content: space-between;
+            justify-content: stretch;
         }
         .alarm-picker-btn {
-            border: 1px solid rgba(255,255,255,0.22);
-            border-radius: 999px;
-            background: rgba(255,255,255,0.07);
+            border: none;
+            border-left: 1px solid rgba(255,255,255,0.22);
+            border-radius: 0;
+            background: transparent;
             color: var(--text-primary);
             font-size: 12px;
             font-weight: 900;
             letter-spacing: 0.6px;
             text-transform: uppercase;
-            padding: 8px 12px;
+            padding: 12px 14px;
             min-width: 46px;
             cursor: pointer;
-            transition: background .2s ease, border-color .2s ease, color .2s ease;
+            transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+            position: relative;
+            flex: 1 1 0;
+            min-height: 56px;
+        }
+        .alarm-picker-control-row .alarm-picker-btn:first-child {
+            border-left: none;
         }
         .alarm-day-btn {
             flex: 1 1 0;
             min-width: 0;
-            font-size: 10px;
-            letter-spacing: 0.2px;
-            padding: 7px 4px;
+            font-size: 11px;
+            letter-spacing: 0.4px;
+            padding: 12px 4px;
         }
         .alarm-picker-btn.active {
-            border-color: rgba(149, 192, 234, 0.85);
-            background: rgba(149, 192, 234, 0.24);
+            background: rgba(149, 192, 234, 0.18);
             color: #d8ecff;
+            box-shadow: inset 0 0 0 1px rgba(149, 192, 234, 0.42);
         }
         .picker-container::before {
             content: "";
@@ -909,10 +920,10 @@
             cursor: ew-resize;
         }
         .wheel::-webkit-scrollbar { display: none; }
-        .wheel div {
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
+        .wheel div { 
+            height: 40px; 
+            line-height: 40px; 
+            text-align: center; 
             font-size: 24px;
             color: var(--text-secondary);
             transition: color 0.12s ease, transform 0.12s ease;
@@ -1012,7 +1023,7 @@
         .alarm-row.alarm-imminent {
             border: 2px solid transparent !important;
             background:
-                linear-gradient(180deg, rgba(255, 247, 190, 0.11) 0%, rgba(255, 210, 92, 0.08) 100%) padding-box,
+                #000000 padding-box,
                 linear-gradient(145deg, #fff7b8 0%, #f2cf58 52%, #9d6b00 100%) border-box !important;
             box-shadow: 0 0 26px rgba(242, 201, 73, 0.28), 0 18px 36px rgba(122, 82, 0, 0.18);
         }
@@ -1036,12 +1047,272 @@
             position: relative;
             z-index: 1;
         }
-        .alarm-time-row {
+        .alarm-card-trigger {
+            flex: 1;
             width: 100%;
+            padding: 0;
+            border: none;
+            background: none;
+            color: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+        .alarm-card-static {
+            flex: 1;
+            min-width: 0;
+        }
+        .alarm-summary-copy {
+            flex: 1;
+            min-width: 0;
+            display: grid;
+            gap: 10px;
+        }
+        .alarm-summary-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .alarm-summary-name-row .alarm-summary-subtitle,
+        .alarm-summary-name-row .alarm-name-input {
+            min-width: 0;
+            flex: 0 1 auto;
+        }
+        .alarm-summary-subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.72);
+        }
+        .alarm-summary-repeat {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            color: rgba(255,255,255,0.58);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .alarm-summary-footer {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .alarm-summary-meta {
+            min-width: 0;
+            flex: 1;
+            display: grid;
+            gap: 4px;
+        }
+        .alarm-card-body {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            min-width: 0;
+        }
+        .alarm-card-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .alarm-card-actions {
+            flex: 0 0 auto;
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        .alarm-summary-type {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.42);
+        }
+        .alarm-card-toggle {
+            flex: 0 0 auto;
+            width: 56px !important;
+        }
+        .alarm-card-open-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.8);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+        .alarm-card-open-btn svg {
+            display: block;
+        }
+        .alarm-rename-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            color: #dbe9ff;
+            cursor: pointer;
+            flex: 0 0 auto;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        #body.alarm-detail-page-open {
+            overflow: hidden;
+        }
+        .alarm-detail-page {
+            position: fixed;
+            inset: 0;
+            z-index: 9500;
+            background: rgba(3, 5, 10, 0.985);
+            transform: translateY(-100%);
+            transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            will-change: transform;
+        }
+        .alarm-detail-page.open {
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .alarm-detail-page-shell {
+            max-width: min(100%, 480px);
+            min-height: 100%;
+            margin: 0 auto;
+            padding: calc(18px + env(safe-area-inset-top)) 24px calc(40px + env(safe-area-inset-bottom));
+            display: grid;
+            gap: 30px;
+        }
+        .alarm-detail-page-topbar {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .alarm-detail-page-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.82);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .alarm-detail-page-hero {
+            display: grid;
+            gap: 12px;
+            text-align: center;
+            justify-items: center;
+        }
+        .alarm-detail-page-name-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             min-width: 0;
+            max-width: 100%;
+        }
+        .alarm-detail-page-label {
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.86);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .alarm-detail-page-name-edit {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.82);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+        .alarm-detail-page-time {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: clamp(58px, 13vw, 84px);
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #fff;
+            line-height: 0.96;
+        }
+        .alarm-detail-page-time span {
+            font-size: 20px;
+            font-weight: 900;
+            opacity: 0.54;
+        }
+        .alarm-detail-page-meta {
+            font-size: 15px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.62);
+        }
+        .alarm-detail-page-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .alarm-detail-page-actions .alarm-edit-btn,
+        .alarm-detail-page-actions .alarm-repeat-trigger,
+        .alarm-detail-page-actions .alarm-delete-btn {
+            width: 100%;
+            min-height: 52px;
+            min-width: 0;
+        }
+        .alarm-detail-page-actions .alarm-type-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+            padding: 7px 14px;
+            font-size: 10px;
+            letter-spacing: 0.9px;
+            border-radius: 999px;
+        }
+        .alarm-detail-page-toggle {
+            width: 58px !important;
+            height: 30px !important;
+            min-height: 30px !important;
+            justify-self: center !important;
+            border-radius: 999px !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 8px 18px rgba(0,0,0,0.22);
+        }
+        .alarm-detail-page-toggle > span {
+            width: 22px !important;
+            height: 22px !important;
+            top: 4px !important;
+            left: 4px !important;
+            transform: none;
+            border-radius: 50% !important;
+        }
+        .alarm-detail-page-toggle[aria-label*="on"] > span {
+            left: calc(100% - 26px) !important;
+        }
+        .alarm-detail-page-toggle[aria-label*="off"] > span {
+            left: 4px !important;
+        }
+        .alarm-detail-page-actions .alarm-delete-btn {
+            border-radius: 16px !important;
+            border: 1px solid rgba(255, 59, 48, 0.78) !important;
+            background: #ff3b30 !important;
+            color: #ffffff !important;
+        }
+        .alarm-detail-page-actions .alarm-delete-btn:hover {
+            background: #e0352d !important;
         }
         .alarm-name-row {
             display: flex;
@@ -1050,34 +1321,11 @@
             margin-bottom: 8px;
             min-width: 0;
         }
-        .alarm-name-main {
-            flex: 1;
-            min-width: 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .alarm-name-row .alarm-type-toggle {
-            margin-left: 10px;
-            flex: 0 0 auto;
-        }
-        .alarm-name-main .alarm-name-text {
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
         .alarm-time-main {
             display: inline-flex;
             align-items: baseline;
             gap: 10px;
             min-width: 0;
-        }
-        .alarm-time-right {
-            margin-left: auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
         .alarm-type-toggle {
             border: 1px solid rgba(255,255,255,0.24);
@@ -1101,55 +1349,106 @@
             border-color: rgba(16,20,24,0.22);
             color: #101418 !important;
         }
-        .alarm-expand-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid rgba(255,255,255,0.14);
-            border-radius: 8px;
-            background: rgba(255,255,255,0.04);
-            color: #dbe9ff;
+        .alarm-countdown-card {
+            border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(10, 16, 27, 0.84), rgba(4, 8, 16, 0.48));
+            padding: 26px 20px 28px;
+            display: grid;
+            gap: 18px;
+            justify-items: center;
+        }
+        .alarm-countdown-card.is-disabled {
+            opacity: 0.64;
+        }
+        .alarm-countdown-now-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+        }
+        .alarm-countdown-now {
             display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: clamp(50px, 12vw, 82px);
+            font-weight: 300;
+            line-height: 0.96;
+            color: #fff;
+        }
+        .alarm-countdown-now span {
+            font-size: 26px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.82);
+        }
+        .alarm-countdown-circle {
+            position: relative;
+            width: min(100%, 340px);
+            aspect-ratio: 1;
+        }
+        .alarm-countdown-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+        .alarm-countdown-marker {
+            position: absolute;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #fff3ad 0%, #ffd54f 52%, #eab100 100%);
+            display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: background .2s ease, border-color .2s ease, transform .2s ease;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 28px rgba(255, 211, 79, 0.24);
         }
-        .alarm-expand-btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.28);
+        .alarm-countdown-marker-top {
+            top: 8px;
         }
-        .alarm-expand-btn svg {
-            transition: transform .2s ease;
-            transform: rotate(0deg);
+        .alarm-countdown-marker-bottom {
+            bottom: 8px;
         }
-        .alarm-expand-btn[aria-expanded="true"] svg {
-            transform: rotate(180deg);
-        }
-        .alarm-details {
-            display: none;
-            gap: 8px;
-        }
-        .alarm-details.open {
-            display: grid;
-        }
-        .alarm-controls-row {
+        .alarm-countdown-center {
+            position: absolute;
+            inset: 0;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            gap: 14px;
-            width: 100%;
-            min-width: 0;
+            justify-content: center;
+            text-align: center;
+            pointer-events: none;
         }
-        .alarm-controls-row .alarm-edit-btn {
-            flex: 1 1 auto;
-            min-width: 0;
+        .alarm-countdown-hours {
+            font-size: clamp(54px, 13vw, 78px);
+            font-weight: 300;
+            color: #fff;
+            line-height: 1;
         }
-        .alarm-controls-row .alarm-delete-btn {
-            flex: 0 0 54px;
-            min-width: 54px;
+        .alarm-countdown-hours span {
+            font-size: 24px;
+            font-weight: 800;
+            opacity: 0.78;
+            margin-left: 8px;
+            text-transform: uppercase;
         }
-        .alarm-controls-row .alarm-toggle-btn {
-            flex: 0 0 56px;
+        .alarm-countdown-minutes {
+            margin-top: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0;
+            color: rgba(255,255,255,0.56);
+        }
+        .alarm-countdown-summary {
+            font-size: clamp(20px, 5vw, 28px);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff3ad 0%, #ffd54f 52%, #eab100 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-align: center;
         }
         .alarm-edit-btn {
             border: none;
@@ -1526,17 +1825,17 @@
         @keyframes bird-flap-seq {
             
             0%, 2% { transform: rotate(-6deg) translateY(0); }
-            4% { transform: rotate(34deg) translateY(-0.6px); }
+            4% { transform: rotate(34deg) translateY(-0.6px); }   
             8% { transform: rotate(-6deg) translateY(0.3px); }
-            12% { transform: rotate(34deg) translateY(-0.6px); }
+            12% { transform: rotate(34deg) translateY(-0.6px); }  
             16% { transform: rotate(-6deg) translateY(0.3px); }
-            20% { transform: rotate(34deg) translateY(-0.6px); }
-            24%, 41% { transform: rotate(-2deg) translateY(0); }
-            45% { transform: rotate(34deg) translateY(-0.6px); }
-            49%, 66% { transform: rotate(-2deg) translateY(0); }
-            72% { transform: rotate(34deg) translateY(-0.6px); }
+            20% { transform: rotate(34deg) translateY(-0.6px); }  
+            24%, 41% { transform: rotate(-2deg) translateY(0); }  
+            45% { transform: rotate(34deg) translateY(-0.6px); }  
+            49%, 66% { transform: rotate(-2deg) translateY(0); }  
+            72% { transform: rotate(34deg) translateY(-0.6px); }  
             78% { transform: rotate(-6deg) translateY(0.3px); }
-            84% { transform: rotate(34deg) translateY(-0.6px); }
+            84% { transform: rotate(34deg) translateY(-0.6px); }  
             90%, 100% { transform: rotate(-6deg) translateY(0); }
         }
 
@@ -1615,7 +1914,7 @@
         }
 
         .day-active #stage { background: var(--sky-day); }
-        .day-active .sun-system { transform: translate(-50%, 38px); }
+        .day-active .sun-system { transform: translate(-50%, 0); }
         #body:not(.day-active) .cloud-container {
             opacity: 0;
             transform: translate3d(0, -120%, 0);
@@ -1901,7 +2200,6 @@
         #body.theme-light .alarm-delete-btn,
         #body.theme-light .alarm-repeat-trigger,
         #body.theme-light .alarm-rename-btn,
-        #body.theme-light .alarm-expand-btn,
         #body.theme-light .background-option {
             border: 1px solid rgba(16, 20, 24, 0.2) !important;
         }
@@ -1997,11 +2295,6 @@
         }
         #body.theme-light .alarm-row {
             border-color: rgba(16, 20, 24, 0.12) !important;
-        }
-        #body.theme-light .alarm-expand-btn {
-            background: rgba(16, 20, 24, 0.06);
-            color: #0a66ff;
-            border-color: rgba(16, 20, 24, 0.16);
         }
         #body.theme-light .alarm-edit-btn {
             background: rgba(16, 20, 24, 0.06);
@@ -2716,7 +3009,6 @@
                             </div>
                         </div>
                         <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
-                        <button id="undo-edit-alarm-btn" class="btn-primary" style="display:none; width:100%; margin-top:10px; height:52px; font-size:15px; background: var(--accent-red); color: #fff;" onclick="undoAlarmEdits()">Undo Edits</button>
                     </div>
                     <div id="alarm-list"></div>
                 </div>
@@ -2843,23 +3135,15 @@
         
 
         const APP_STATE_STORAGE_KEY = 'atmospherePro.appState.v1';
-        const DEFAULT_SOUND_ID = 'sunrise-chimes';
+        const ALARM_VOLUME_MULTIPLIER = 2;
+        const DEFAULT_SOUND_ID = 'electric-drive';
         const BASE_SOUND_OPTIONS = [
-            { id: 'sunrise-chimes', name: 'Default', description: 'Fast wake groove with bright marimba lead and clean pulse.' },
-            { id: 'pop-bright', name: 'Neon Pulse', description: 'Bright electronic pulse with a sharper modern edge.', audioUrl: 'sounds/Neon_Pulse.mp3' },
-            { id: 'smooth-jazz', name: 'Grand Ballroom Strut', description: 'A lively ballroom groove with a swinging feel.', audioUrl: 'sounds/Grand_Ballroom_Strut.mp3' },
-            { id: 'electric-drive', name: 'The Gilded Minuet', description: 'A polished classical march with ornate movement.', audioUrl: 'sounds/The_Gilded_Minuet.mp3' },
-            { id: 'lofi-sunrise', name: 'Cobblestone Dreams', description: 'A softer drifting track with a relaxed late-night tone.', audioUrl: 'sounds/Cobblestone_Dreams.mp3' }
+            { id: 'electric-drive', name: 'Classical', description: 'A polished classical march with ornate movement.', audioUrl: 'sounds/The_Gilded_Minuet.mp3' },
+            { id: 'pop-bright', name: 'Pop', description: 'Bright electronic pulse with a sharper modern edge.', audioUrl: 'sounds/Neon_Pulse.mp3' },
+            { id: 'smooth-jazz', name: 'Jazz', description: 'A lively ballroom groove with a swinging feel.', audioUrl: 'sounds/Grand_Ballroom_Strut.mp3' },
+            { id: 'lofi-sunrise', name: 'Calm', description: 'A softer drifting track with a relaxed late-night tone.', audioUrl: 'sounds/Cobblestone_Dreams.mp3' }
         ];
         const ALARM_SOUND_PROFILES = {
-            'sunrise-chimes': {
-                cycleLength: 20,
-                rampSeconds: 5,
-                level: 0.2,
-                motifs: [
-                    { length: 8, notes: [{ t: 0.0, d: 0.22, f: 329.63, g: 0.6, w: 'triangle', harmonic: 1.6, hg: 0.06, pan: -0.08 }, { t: 0.75, d: 0.18, f: 392.0, g: 0.56, w: 'triangle', harmonic: 1.5, hg: 0.05, pan: 0.08 }, { t: 1.5, d: 0.2, f: 493.88, g: 0.62, w: 'triangle', harmonic: 1.5, hg: 0.05, pan: -0.05 }, { t: 2.5, d: 0.18, f: 392.0, g: 0.55, w: 'triangle', harmonic: 1.4, hg: 0.05, pan: 0.05 }, { t: 3.25, d: 0.22, f: 523.25, g: 0.64, w: 'triangle', harmonic: 1.6, hg: 0.06, pan: -0.04 }, { t: 4.0, d: 0.2, f: 493.88, g: 0.6, w: 'triangle', harmonic: 1.4, hg: 0.05, pan: 0.04 }, { t: 5.0, d: 0.2, f: 392.0, g: 0.56, w: 'triangle', harmonic: 1.4, hg: 0.05, pan: -0.03 }, { t: 6.0, d: 0.2, f: 440.0, g: 0.58, w: 'triangle', harmonic: 1.4, hg: 0.05, pan: 0.03 }, { t: 7.0, d: 0.24, f: 369.99, g: 0.54, w: 'triangle', harmonic: 1.4, hg: 0.05, pan: 0.0 }] }
-                ]
-            },
             'pop-bright': {
                 cycleLength: 20,
                 rampSeconds: 4,
@@ -3070,7 +3354,7 @@
         function _getSoundNameById(soundId) {
             const normalized = _normalizeAlarmSoundId(soundId);
             const match = Array.isArray(SOUND_OPTIONS) ? SOUND_OPTIONS.find(s => s && s.id === normalized) : null;
-            return match ? String(match.name || 'Default') : 'Default';
+            return match ? String(match.name || 'Classical') : 'Classical';
         }
 
         function showAppTopToast(message, durationMs = 2000) {
@@ -3954,8 +4238,8 @@
             const video = document.getElementById('video');
             
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
                 });
                 video.srcObject = stream;
             } catch (err) {
@@ -4354,13 +4638,27 @@
             for (let i = 0; i < shootingCount; i++) {
                 const streak = document.createElement('span');
                 streak.className = 'shooting-star';
+                const tintRoll = Math.random();
+                let trailStart = 'rgba(255,255,255,0)';
+                let trailEnd = 'rgba(255,255,255,0.95)';
+                let glow = 'rgba(255,255,255,0.8)';
+                if (i === 0 || tintRoll < 0.18) {
+                    trailStart = 'rgba(126, 198, 255, 0)';
+                    trailEnd = 'rgba(126, 198, 255, 0.96)';
+                    glow = 'rgba(126, 198, 255, 0.84)';
+                }
 
                 const w = Math.max(window.innerWidth, 320);
                 const h = Math.max(window.innerHeight, 480);
-                const side = Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
+                const side = (i === 0) ? 0 : Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
                 let sx = 0, sy = 0, ex = 0, ey = 0;
 
-                if (side === 0) {
+                if (i === 0) {
+                    sx = w * 0.34;
+                    sy = -70;
+                    ex = w * 0.7;
+                    ey = h * 0.46;
+                } else if (side === 0) {
                     sx = Math.random() * w;
                     sy = -120;
                     ex = sx + (Math.random() - 0.5) * (w * 0.7);
@@ -4392,6 +4690,8 @@
                 // One shooting star begins every 3 seconds.
                 streak.style.setProperty('--shoot-duration', '12s');
                 streak.style.setProperty('--shoot-delay', `${i * 3}s`);
+                streak.style.background = `linear-gradient(90deg, ${trailStart}, ${trailEnd})`;
+                streak.style.filter = `drop-shadow(0 0 10px ${glow})`;
                 shootingField.appendChild(streak);
             }
         }
@@ -4488,7 +4788,7 @@
                 const cs = getComputedStyle(el);
                 const baseTransform = cs.transform && cs.transform !== 'none' ? cs.transform : '';
 
-                const speed = 28 + Math.random() * 30; // 28-58 px/sec for calmer glide
+                const speed = 10 + Math.random() * 12; // 10-22 px/sec to keep cloud motion light
                 const dirX = windDir;
                 const norm = Math.hypot(dirX, 0); // only horizontal movement
 
@@ -4828,13 +5128,9 @@
 
         function _updateAlarmEditActions() {
             const setBtn = document.getElementById('set-alarm-btn');
-            const undoBtn = document.getElementById('undo-edit-alarm-btn');
             const isEditing = Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
             if (setBtn) {
                 setBtn.textContent = isEditing ? 'Save Changes' : 'Set New Alarm';
-            }
-            if (undoBtn) {
-                undoBtn.style.display = isEditing ? 'block' : 'none';
             }
             _syncAlarmCommitButtonLimitState();
         }
@@ -5046,97 +5342,333 @@
             window.addEventListener('scroll', () => { if (_repeatPopover) _closeRepeatPopover(); }, { passive: true });
         }
 
-        function renderAlarms() {
-            const list = document.getElementById('alarm-list');
-            if (!list) return;
-            list.innerHTML = alarms.map((a, i) => {
-                const alarmName = _normalizeAlarmName(alarmNames[i], i);
-                const isRenaming = _renamingAlarmIndex === i;
-                const repeatLabel = _formatRepeatDays(_getRepeatDaysForAlarm(i));
-                const soundLabel = _getSoundNameById(_getAlarmSoundId(i));
-                const alarmType = (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine';
-                const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[i] === false);
-                const typeLabel = alarmType === 'routine' ? 'Routine' : 'Regular';
-                const typeColor = alarmType === 'routine' ? 'var(--sun-main)' : 'var(--accent-blue)';
-                const isCloseToRinging = _isAlarmImminent(i, a);
-                const rowDisabledStyle = !isEnabled ? 'background:rgba(130,130,130,0.12); border:1px solid rgba(180,180,180,0.2);' : '';
-                const contentDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
-                const nameTextDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
-                const isExpanded = _expandedAlarmIndex === i;
-                return `
-                <div class="alarm-row${isCloseToRinging ? ' alarm-imminent' : ''}" data-alarm-idx="${i}" style="border:1px solid rgba(255,255,255,0.12);${rowDisabledStyle}padding:30px 24px;border-radius:22px;margin-bottom:28px; min-height:192px;">
-                    <div class="alarm-name-row" style="${contentDisabledStyle}">
-                        <span class="alarm-name-main">
-                            ${isRenaming
-                                ? `<input type="text" class="alarm-name-input" data-alarm-idx="${i}" value="${alarmName.replace(/"/g, '&quot;')}" maxlength="40" style="flex:1; min-width:0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; ${nameTextDisabledStyle}">`
-                                : `<div class="alarm-name-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; font-weight:900; color:rgba(255,255,255,0.72); ${nameTextDisabledStyle}">${alarmName}</div>`
-                            }
-                            <button class="alarm-rename-btn" data-alarm-idx="${i}" aria-label="Rename alarm" title="Rename alarm" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:none; border-radius:8px; background:rgba(255,255,255,0.06); color:#dbe9ff; cursor:pointer;">
+        function _getAlarmCountdownData(alarmStr, idx, isEnabled) {
+            const circumference = 2 * Math.PI * 122;
+            if (!isEnabled) {
+                return {
+                    main: 'Off',
+                    sub: 'Alarm disabled',
+                    summary: 'Alarm disabled',
+                    dash: '0',
+                    circumference: circumference.toFixed(2),
+                    disabledClass: ' is-disabled'
+                };
+            }
+
+            const ms = _timeUntilAlarm(alarmStr, idx);
+            if (!Number.isFinite(ms) || ms === Infinity) {
+                return {
+                    main: '--',
+                    sub: 'Unavailable',
+                    summary: 'Unable to calculate',
+                    dash: '0',
+                    circumference: circumference.toFixed(2),
+                    disabledClass: ' is-disabled'
+                };
+            }
+
+            const totalMinutes = Math.max(0, Math.floor(ms / 60000));
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const totalHours = totalMinutes / 60;
+            const progress = Math.min(
+                circumference,
+                Math.max(12, (Math.min(totalHours, 24) / 24) * circumference)
+            );
+
+            return {
+                main: `${hours}<span>HR</span>`,
+                sub: `${minutes} min`,
+                summary: `${hours} hr ${minutes} min until alarm`,
+                dash: progress.toFixed(2),
+                circumference: circumference.toFixed(2),
+                disabledClass: ''
+            };
+        }
+
+        function _renderAlarmCountdownCircle(alarmStr, idx, isEnabled) {
+            const data = _getAlarmCountdownData(alarmStr, idx, isEnabled);
+            const ringGradientId = `alarm-countdown-ring-${idx}`;
+            const now = new Date().toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            const nowMatch = now.match(/^(.+?)\s([AP]M)$/);
+            const nowMain = nowMatch ? nowMatch[1] : now;
+            const nowSuffix = nowMatch ? nowMatch[2] : '';
+
+            return `
+                <div class="alarm-countdown-card${data.disabledClass}">
+                    <div class="alarm-countdown-now-label">Current Time</div>
+                    <div class="alarm-countdown-now">${nowMain}${nowSuffix ? `<span>${nowSuffix}</span>` : ''}</div>
+                    <div class="alarm-countdown-summary">${data.summary}</div>
+                    <div class="alarm-countdown-circle">
+                        <svg class="alarm-countdown-svg" viewBox="0 0 320 320" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="${ringGradientId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff3ad"></stop>
+                                    <stop offset="52%" stop-color="#ffd54f"></stop>
+                                    <stop offset="100%" stop-color="#eab100"></stop>
+                                </linearGradient>
+                            </defs>
+                            <g transform="rotate(-90 160 160)">
+                                <circle cx="160" cy="160" r="122" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="14"></circle>
+                                <circle cx="160" cy="160" r="122" fill="none" stroke="url(#${ringGradientId})" stroke-width="14" stroke-linecap="round" stroke-dasharray="${data.dash} ${data.circumference}"></circle>
+                            </g>
+                        </svg>
+                        <div class="alarm-countdown-marker alarm-countdown-marker-top" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24" style="display:block; fill:none; stroke:#05070c; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;">
+                                <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 1 0 9.8 9.8z"></path>
+                            </svg>
+                        </div>
+                        <div class="alarm-countdown-marker alarm-countdown-marker-bottom" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24" style="display:block; fill:none; stroke:#05070c; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;">
+                                <path d="M6 9a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9"></path>
+                                <path d="M10.5 21a1.5 1.5 0 0 0 3 0"></path>
+                            </svg>
+                        </div>
+                        <div class="alarm-countdown-center">
+                            <div class="alarm-countdown-hours">${data.main}</div>
+                            <div class="alarm-countdown-minutes">${data.sub}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function _ensureAlarmDetailPage() {
+            let page = document.getElementById('alarm-detail-page');
+            if (page) return page;
+            page = document.createElement('div');
+            page.id = 'alarm-detail-page';
+            page.className = 'alarm-detail-page';
+            page.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(page);
+            return page;
+        }
+
+        function _closeAlarmDetailPage() {
+            if (_openRepeatEditorIndex !== null || _openSoundEditorIndex !== null) _closeRepeatPopover();
+            _expandedAlarmIndex = null;
+            const page = _ensureAlarmDetailPage();
+            page.classList.remove('open');
+            page.setAttribute('aria-hidden', 'true');
+            document.getElementById('body')?.classList.remove('alarm-detail-page-open');
+        }
+
+        function _renderAlarmDetailPage() {
+            const page = _ensureAlarmDetailPage();
+            const idx = _expandedAlarmIndex;
+            if (!Number.isInteger(idx) || idx < 0 || idx >= alarms.length) {
+                page.classList.remove('open');
+                page.setAttribute('aria-hidden', 'true');
+                document.getElementById('body')?.classList.remove('alarm-detail-page-open');
+                return;
+            }
+
+            const alarmStr = alarms[idx] || '';
+            const timeParts = alarmStr.split(' ');
+            const repeatLabel = _formatRepeatDays(_getRepeatDaysForAlarm(idx));
+            const soundLabel = _getSoundNameById(_getAlarmSoundId(idx));
+            const alarmType = (alarmTypes && alarmTypes[idx]) ? alarmTypes[idx] : 'routine';
+            const typeLabel = alarmType === 'routine' ? 'Routine' : 'Regular';
+            const typeColor = alarmType === 'routine' ? 'var(--sun-main)' : 'var(--accent-blue)';
+            const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[idx] === false);
+            const alarmName = _normalizeAlarmName(alarmNames[idx], idx);
+            const pageWasOpen = page.classList.contains('open');
+
+            page.innerHTML = `
+                <div class="alarm-detail-page-shell">
+                    <div class="alarm-detail-page-topbar">
+                        <button type="button" class="alarm-detail-page-close" aria-label="Close alarm detail page">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
+                                <path d="M6 6l12 12"></path>
+                                <path d="M18 6 6 18"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="alarm-detail-page-hero">
+                        <div class="alarm-detail-page-name-row">
+                            <div class="alarm-detail-page-label">${alarmName}</div>
+                            <button type="button" class="alarm-detail-page-name-edit" aria-label="Rename alarm">
                                 <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
                                     <path d="M12 20h9"></path>
                                     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
                                 </svg>
                             </button>
-                        </span>
-                        <button class="alarm-type-toggle" data-alarm-idx="${i}" style="color:${typeColor}; opacity:0.95;">${typeLabel}</button>
-                    </div>
-                    <div class="alarm-time-row" style="${contentDisabledStyle}">
-                        <span class="alarm-time-main">
-                            <span style="font-size:36px; font-weight:300; letter-spacing:2px;">${a.split(' ')[0]}</span>
-                            <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
-                        </span>
-                        <span class="alarm-time-right">
-                            <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
-                                <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
-                            </button>
-                            <button class="alarm-expand-btn" data-alarm-idx="${i}" aria-label="${isExpanded ? 'Collapse alarm options' : 'Expand alarm options'}" aria-expanded="${isExpanded ? 'true' : 'false'}">
-                                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
-                                    <path d="M6 9l6 6 6-6"></path>
-                                </svg>
-                            </button>
-                        </span>
-                    </div>
-                    <button type="button" class="alarm-repeat-trigger alarm-repeat-inline-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}" style="${contentDisabledStyle}">
-                        <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
-                    </button>
-                    <div class="alarm-details ${isExpanded ? 'open' : ''}" style="${contentDisabledStyle}">
-                        <div class="alarm-controls-row">
-                            <button class="alarm-edit-btn" data-alarm-idx="${i}"><span class="alarm-edit-label">Edit</span></button>
-                            <button class="alarm-delete-btn" data-alarm-idx="${i}" aria-label="Delete alarm" title="Delete alarm" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M3 6h18"></path>
-                                    <path d="M8 6V4h8v2"></path>
-                                    <path d="M7 6l1 14h8l1-14"></path>
-                                </svg>
-                            </button>
                         </div>
-                        <button type="button" class="alarm-repeat-trigger alarm-sound-trigger" data-alarm-idx="${i}" aria-label="Choose alarm sound for ${a}">
+                        <div class="alarm-detail-page-time">${timeParts[0] || alarmStr}<span>${timeParts[1] || ''}</span></div>
+                        <div class="alarm-detail-page-meta">${typeLabel} alarm</div>
+                    </div>
+                    ${_renderAlarmCountdownCircle(alarmStr, idx, isEnabled)}
+                    <div class="alarm-detail-page-actions">
+                        <button class="alarm-type-toggle" data-alarm-idx="${idx}" style="color:${typeColor}; opacity:0.95;">${typeLabel}</button>
+                        <button class="alarm-toggle-btn alarm-detail-page-toggle" data-alarm-idx="${idx}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; border:none; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
+                            <span style="position:absolute; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
+                        </button>
+                        <button class="alarm-edit-btn" data-alarm-idx="${idx}"><span class="alarm-edit-label">Edit Alarm</span></button>
+                        <button type="button" class="alarm-repeat-trigger alarm-repeat-inline-trigger" data-alarm-idx="${idx}" aria-label="Edit repeating days for ${alarmStr}">
+                            <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
+                        </button>
+                        <button type="button" class="alarm-repeat-trigger alarm-sound-trigger" data-alarm-idx="${idx}" aria-label="Choose alarm sound for ${alarmStr}">
                             <span class="alarm-repeat-label">Sound: ${soundLabel}</span>
                         </button>
+                        <button class="alarm-delete-btn" data-alarm-idx="${idx}" aria-label="Delete alarm" title="Delete alarm">Delete</button>
+                    </div>
+                </div>
+            `;
+
+            page.onclick = (evt) => {
+                if (evt.target === page) _closeAlarmDetailPage();
+            };
+            page.querySelector('.alarm-detail-page-shell')?.addEventListener('click', (evt) => {
+                evt.stopPropagation();
+            });
+            page.querySelector('.alarm-detail-page-close')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                _closeAlarmDetailPage();
+            });
+            page.querySelector('.alarm-detail-page-name-edit')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                _closeAlarmDetailPage();
+                renameAlarm(idx);
+            });
+            page.querySelector('.alarm-toggle-btn')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                toggleAlarmEnabled(idx);
+            });
+            page.querySelector('.alarm-type-toggle')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                toggleAlarmType(idx);
+            });
+            page.querySelector('.alarm-edit-btn')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                _closeAlarmDetailPage();
+                editAlarm(idx);
+            });
+            page.querySelector('.alarm-repeat-inline-trigger')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                openRepeatEditor(idx, evt.currentTarget);
+            });
+            page.querySelector('.alarm-sound-trigger')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                openSoundEditor(idx, evt.currentTarget);
+            });
+            page.querySelector('.alarm-delete-btn')?.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                _closeAlarmDetailPage();
+                deleteAlarm(idx);
+            });
+
+            page.setAttribute('aria-hidden', 'false');
+            document.getElementById('body')?.classList.add('alarm-detail-page-open');
+            if (!pageWasOpen) {
+                page.classList.remove('open');
+                requestAnimationFrame(() => page.classList.add('open'));
+            } else {
+                page.classList.add('open');
+            }
+        }
+
+        function renderAlarms() {
+            const list = document.getElementById('alarm-list');
+            if (!list) return;
+            list.innerHTML = alarms.map((a, i) => {
+                const alarmName = _normalizeAlarmName(alarmNames[i], i);
+                const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[i] === false);
+                const repeatLabel = _formatRepeatDays(_getRepeatDaysForAlarm(i));
+                const alarmType = (alarmTypes && alarmTypes[i]) === 'regular' ? 'Regular' : 'Routine';
+                const isCloseToRinging = _isAlarmImminent(i, a);
+                const rowDisabledStyle = !isEnabled ? 'background:rgba(130,130,130,0.12); border:1px solid rgba(180,180,180,0.2);' : '';
+                const contentDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
+                const nameTextDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
+                const isRenaming = _renamingAlarmIndex === i;
+                return `
+                <div class="alarm-row${isCloseToRinging ? ' alarm-imminent' : ''}" data-alarm-idx="${i}" style="border:1px solid rgba(255,255,255,0.12);${rowDisabledStyle}padding:30px 24px;border-radius:22px;margin-bottom:28px; min-height:112px;">
+                    <div class="alarm-name-row" style="${contentDisabledStyle}">
+                        ${isRenaming
+                            ? `<div class="alarm-card-static">
+                                    <div class="alarm-card-body">
+                                        <div class="alarm-summary-copy alarm-card-main">
+                                            <div class="alarm-summary-name-row">
+                                                <input type="text" class="alarm-name-input" data-alarm-idx="${i}" value="${alarmName.replace(/"/g, '&quot;')}" maxlength="40" style="flex:1; min-width:0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; ${nameTextDisabledStyle}">
+                                            </div>
+                                            <span class="alarm-time-main">
+                                                <span style="font-size:42px; font-weight:300; letter-spacing:2px;">${a.split(' ')[0]}</span>
+                                                <span style="font-size:15px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
+                                            </span>
+                                            <div class="alarm-summary-footer">
+                                                <div class="alarm-summary-meta">
+                                                    <div class="alarm-summary-repeat" style="${nameTextDisabledStyle}">Repeating: ${repeatLabel}</div>
+                                                    <div class="alarm-summary-type" style="${nameTextDisabledStyle}">${alarmType}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alarm-card-actions">
+                                            <button type="button" class="alarm-toggle-btn alarm-card-toggle" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; border:none; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
+                                                <span style="position:absolute; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
+                                            </button>
+                                            <button type="button" class="alarm-card-open-btn" data-alarm-idx="${i}" aria-label="Open detail page for ${alarmName}" title="Open detail page">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round;">
+                                                    <path d="M5 7h14"></path>
+                                                    <path d="M5 12h14"></path>
+                                                    <path d="M5 17h14"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>`
+                            : `<div class="alarm-card-trigger" data-alarm-idx="${i}" role="button" tabindex="0" aria-label="Open detail page for ${alarmName}">
+                                    <div class="alarm-card-body">
+                                        <div class="alarm-summary-copy alarm-card-main">
+                                            <div class="alarm-summary-name-row">
+                                                <div class="alarm-summary-subtitle ${!isEnabled ? 'alarm-summary-subtitle-off' : ''}" style="${nameTextDisabledStyle}">${alarmName}</div>
+                                                <button type="button" class="alarm-rename-btn" data-alarm-idx="${i}" aria-label="Rename alarm" title="Rename alarm">
+                                                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
+                                                        <path d="M12 20h9"></path>
+                                                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <span class="alarm-time-main">
+                                                <span style="font-size:42px; font-weight:300; letter-spacing:2px;">${a.split(' ')[0]}</span>
+                                                <span style="font-size:15px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
+                                            </span>
+                                            <div class="alarm-summary-footer">
+                                                <div class="alarm-summary-meta">
+                                                    <div class="alarm-summary-repeat" style="${nameTextDisabledStyle}">Repeating: ${repeatLabel}</div>
+                                                    <div class="alarm-summary-type" style="${nameTextDisabledStyle}">${alarmType}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alarm-card-actions">
+                                            <button type="button" class="alarm-toggle-btn alarm-card-toggle" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; border:none; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
+                                                <span style="position:absolute; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
+                                            </button>
+                                            <button type="button" class="alarm-card-open-btn" data-alarm-idx="${i}" aria-label="Open detail page for ${alarmName}" title="Open detail page">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round;">
+                                                    <path d="M5 7h14"></path>
+                                                    <path d="M5 12h14"></path>
+                                                    <path d="M5 17h14"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>`
+                        }
                     </div>
                 </div>
             `}).join('');
 
-            document.querySelectorAll('.alarm-edit-btn').forEach(btn => {
-                const idx = parseInt(btn.dataset.alarmIdx);
-                btn.onclick = (evt) => {
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                    editAlarm(idx);
-                };
-            });
-            document.querySelectorAll('.alarm-repeat-trigger').forEach(btn => {
-                const idx = parseInt(btn.dataset.alarmIdx);
-                btn.onclick = (evt) => {
-                    evt.stopPropagation();
-                    if (btn.classList.contains('alarm-sound-trigger')) {
-                        openSoundEditor(idx, btn);
-                        return;
-                    }
-                    openRepeatEditor(idx, btn);
-                };
-            });
-            document.querySelectorAll('.alarm-rename-btn').forEach(btn => {
+            list.querySelectorAll('.alarm-rename-btn').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx, 10);
                 btn.onclick = (evt) => {
                     evt.preventDefault();
@@ -5144,7 +5676,23 @@
                     renameAlarm(idx);
                 };
             });
-            document.querySelectorAll('.alarm-name-input').forEach(input => {
+            list.querySelectorAll('.alarm-card-toggle').forEach(btn => {
+                const idx = parseInt(btn.dataset.alarmIdx, 10);
+                btn.onclick = (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    toggleAlarmEnabled(idx);
+                };
+            });
+            list.querySelectorAll('.alarm-card-open-btn').forEach(btn => {
+                const idx = parseInt(btn.dataset.alarmIdx, 10);
+                btn.onclick = (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    toggleAlarmDetails(idx);
+                };
+            });
+            list.querySelectorAll('.alarm-name-input').forEach(input => {
                 const idx = parseInt(input.dataset.alarmIdx, 10);
                 setTimeout(() => {
                     if (_renamingAlarmIndex === idx) {
@@ -5166,32 +5714,20 @@
                     if (_renamingAlarmIndex === idx) _commitAlarmNameEdit(idx, input.value);
                 });
             });
-            document.querySelectorAll('.alarm-toggle-btn').forEach(btn => {
-                const idx = parseInt(btn.dataset.alarmIdx);
-                btn.onclick = () => toggleAlarmEnabled(idx);
-            });
-            document.querySelectorAll('.alarm-type-toggle').forEach(btn => {
+            list.querySelectorAll('.alarm-card-trigger').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx, 10);
                 btn.onclick = (evt) => {
                     evt.preventDefault();
-                    evt.stopPropagation();
-                    toggleAlarmType(idx);
+                    toggleAlarmDetails(idx);
                 };
-            });
-            document.querySelectorAll('.alarm-expand-btn').forEach(btn => {
-                const idx = parseInt(btn.dataset.alarmIdx, 10);
-                btn.onclick = (evt) => {
+                btn.onkeydown = (evt) => {
+                    if (evt.key !== 'Enter' && evt.key !== ' ') return;
                     evt.preventDefault();
-                    evt.stopPropagation();
                     toggleAlarmDetails(idx);
                 };
             });
-
-            document.querySelectorAll('.alarm-delete-btn').forEach(btn => {
-                const idx = parseInt(btn.dataset.alarmIdx);
-                btn.onclick = () => deleteAlarm(idx);
-            });
             _updateAlarmEditActions();
+            _renderAlarmDetailPage();
 
             if (_openRepeatEditorIndex !== null) {
                 const activeTrigger = document.querySelector(`.alarm-repeat-inline-trigger[data-alarm-idx="${_openRepeatEditorIndex}"]`);
@@ -5965,35 +6501,6 @@
 
         const ALARM_SONG_LOOP_SECONDS = 20; // each alarm repeats after exactly 20s
         const ALARM_GROOVE_CONFIG = {
-            'sunrise-chimes': {
-                swing: 0.03,
-                bpm: 124,
-                cycleBeats: 8,
-                bassFreq: 98,
-                bassPattern: [
-                    { beat: 0.0, vel: 0.86, len: 0.22 },
-                    { beat: 1.5, vel: 0.48, len: 0.18 },
-                    { beat: 2.0, vel: 0.74, len: 0.22 },
-                    { beat: 3.5, vel: 0.5, len: 0.18 },
-                    { beat: 4.0, vel: 0.82, len: 0.22 },
-                    { beat: 6.0, vel: 0.72, len: 0.22 },
-                    { beat: 7.5, vel: 0.54, len: 0.18 }
-                ],
-                percPattern: [
-                    { beat: 0.5, vel: 0.34, type: 'hat' },
-                    { beat: 1.0, vel: 0.3, type: 'hat' },
-                    { beat: 1.5, vel: 0.34, type: 'hat' },
-                    { beat: 2.5, vel: 0.36, type: 'hat' },
-                    { beat: 3.0, vel: 0.28, type: 'click' },
-                    { beat: 3.5, vel: 0.36, type: 'hat' },
-                    { beat: 4.5, vel: 0.34, type: 'hat' },
-                    { beat: 5.0, vel: 0.3, type: 'hat' },
-                    { beat: 5.5, vel: 0.34, type: 'hat' },
-                    { beat: 6.5, vel: 0.36, type: 'hat' },
-                    { beat: 7.0, vel: 0.3, type: 'click' },
-                    { beat: 7.5, vel: 0.36, type: 'hat' }
-                ]
-            },
             'pop-bright': {
                 swing: 0,
                 bpm: 128,
@@ -6076,31 +6583,6 @@
             }
         };
         const ALARM_BACKGROUND_ARRANGEMENTS = {
-            'sunrise-chimes': {
-                rootMidi: 60,
-                mode: 'major',
-                leadInstrument: 'marimba',
-                padInstrument: 'none',
-                melodyCycleBeats: 8,
-                chords: [[0, 2, 4], [5, 0, 2], [4, 6, 1], [3, 5, 0]],
-                melodyPattern: [
-                    { beat: 0.0, degree: 2, len: 0.2, vel: 0.72 },
-                    { beat: 0.75, degree: 4, len: 0.18, vel: 0.68 },
-                    { beat: 1.5, degree: 6, len: 0.2, vel: 0.74 },
-                    { beat: 2.5, degree: 4, len: 0.18, vel: 0.66 },
-                    { beat: 3.25, degree: 7, len: 0.22, vel: 0.76 },
-                    { beat: 4.0, degree: 6, len: 0.2, vel: 0.72 },
-                    { beat: 5.0, degree: 4, len: 0.2, vel: 0.68 },
-                    { beat: 6.0, degree: 5, len: 0.2, vel: 0.7 },
-                    { beat: 7.0, degree: 3, len: 0.24, vel: 0.66 }
-                ],
-                arpPattern: [
-                    { beat: 1.0, chordIdx: 0, toneIdx: 0, vel: 0.32 },
-                    { beat: 3.0, chordIdx: 1, toneIdx: 1, vel: 0.3 },
-                    { beat: 5.0, chordIdx: 2, toneIdx: 0, vel: 0.32 },
-                    { beat: 7.0, chordIdx: 3, toneIdx: 1, vel: 0.3 }
-                ]
-            },
             'pop-bright': {
                 rootMidi: 60,
                 mode: 'major',
@@ -6185,13 +6667,6 @@
             }
         };
         const ALARM_SOUND_DESIGN_PROFILES = {
-            'sunrise-chimes': {
-                level: 1,
-                loudnessMultiplier: 5,
-                rampSeconds: 5,
-                mix: { bell: 0.18, pad: 0.05, bass: 0.36, perc: 0.32, lead: 0.72 },
-                fx: { delayTime: 0.18, feedback: 0.12, delaySend: 0.08, reverbSend: 0.1, chorusDepth: 0.0008, chorusRate: 0.2, chorusMix: 0.03 }
-            },
             'pop-bright': {
                 level: 0.22,
                 rampSeconds: 4,
@@ -6290,7 +6765,7 @@
                         if (playPromise && typeof playPromise.catch === 'function') {
                             playPromise.catch(() => {});
                         }
-                        const target = 0.8;
+                        const target = Math.min(1, 0.8 * ALARM_VOLUME_MULTIPLIER);
                         const rampMs = 10000;
                         const started = Date.now();
                         const ramp = setInterval(() => {
@@ -6468,7 +6943,7 @@
 
                 const baseLevel = Math.max(0.11, Math.min(0.26, Number(design.level) || Number(legacyProfile.level) || 0.2));
                 const loudnessMultiplier = Math.max(0.1, Math.min(10, Number(design.loudnessMultiplier) || 1));
-                const safeLevel = baseLevel * loudnessMultiplier;
+                const safeLevel = Math.min(0.98, baseLevel * loudnessMultiplier * ALARM_VOLUME_MULTIPLIER);
                 const rampSeconds = Math.max(4, Math.min(13, Number(design.rampSeconds) || Number(legacyProfile.rampSeconds) || 9));
                 const loopSeconds = Math.max(6, Math.min(30, Number(design.loopSeconds) || Number(legacyProfile.cycleLength) || ALARM_SONG_LOOP_SECONDS));
                 master.gain.linearRampToValueAtTime(safeLevel, now + rampSeconds);
@@ -6920,8 +7395,6 @@
             if (!Haptics) return;
 
             _vibrateAlarmStop();
-            console.log('Haptics started');
-
             try {
                 await Haptics.vibrate?.();
             } catch (e) {
@@ -6938,7 +7411,6 @@
         }
 
         function _vibrateAlarmStop() {
-            console.log('Haptics stopped');
             if (_alarmHapticsInterval) {
                 clearInterval(_alarmHapticsInterval);
                 _alarmHapticsInterval = null;
@@ -6948,6 +7420,7 @@
         function _ringAlarm(index) {
             const repeatDays = _getRepeatDaysForAlarm(index);
             queueNativeAlarmNotificationSync();
+            _closeAlarmDetailPage();
 
             _currentRingingIndexes.push(index);
             _scheduleAlarmAutoStop(index);
@@ -7226,6 +7699,7 @@
                 'background': 'screen-sounds'
             };
             const targetId = mappings[name] || 'screen-post';
+            if (targetId !== 'screen-post') _closeAlarmDetailPage();
             ['screen-wake','screen-post','screen-routine','screen-timers','screen-sounds'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
