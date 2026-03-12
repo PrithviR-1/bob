@@ -44,7 +44,7 @@
             
             --transition-speed: 5s;
             --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
-            --app-shell-width: min(100vw, 584px);
+            --app-shell-width: min(100vw, 585px);
         }
 
         
@@ -2597,11 +2597,13 @@
             overflow: visible;
         }
         .alarm-composer-glyph {
-            display: block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             font-size: 40px;
             line-height: 1;
             font-weight: 300;
-            transform: translateY(-1px);
+            transform: none;
             color: #fff;
             text-align: center;
             width: 1em;
