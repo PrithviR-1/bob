@@ -2398,7 +2398,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 72px 0 20px 0;
+            margin: 72px 0 28px 0;
         }
         .home-analog-clock-wrap {
             display: flex;
@@ -2580,12 +2580,12 @@
         }
         .alarm-composer-btn {
             position: relative;
-            width: 58px;
-            height: 58px;
+            width: 64px;
+            height: 64px;
             padding: 0;
-            border: 1px solid rgba(255,255,255,0.96);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            background: rgba(255,255,255,0.02);
+            background: rgba(9, 14, 20, 0.72);
             color: #fff;
             font-size: 0;
             font-weight: 500;
@@ -2593,21 +2593,23 @@
             cursor: pointer;
             display: grid;
             place-items: center;
-            box-shadow: 0 0 0 0.5px rgba(255,255,255,0.7), 0 10px 24px rgba(0,0,0,0.22);
+            box-shadow: 0 18px 44px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.06);
             overflow: visible;
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
         }
         .alarm-composer-glyph {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 34px;
             line-height: 1;
-            font-weight: 300;
+            font-weight: 250;
             transform: none;
             color: #fff;
             text-align: center;
             width: 1em;
             height: 1em;
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .alarm-composer-btn::before,
         .alarm-composer-btn::after {
@@ -2624,13 +2626,19 @@
             animation-delay: 0s;
         }
         .alarm-composer-btn.open {
-            background: rgba(255,255,255,0.04);
+            background: rgba(18, 24, 34, 0.94);
+            border-color: rgba(255,255,255,0.18);
             color: #fff;
+            transform: rotate(45deg) scale(0.96);
+            box-shadow: 0 14px 34px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
         }
         .alarm-composer-btn.open::before,
         .alarm-composer-btn.open::after {
             animation-play-state: paused;
             opacity: 0;
+        }
+        .alarm-composer-btn.open .alarm-composer-glyph {
+            transform: scale(1.02);
         }
         .alarm-composer-btn.cooldown {
             opacity: 0.5;
@@ -2686,38 +2694,315 @@
             overflow: visible;
         }
 
-#alarm-create-panel {
-    position: relative;
-    z-index: 50;
-    padding: 0 14px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.9) 100%);
-    border-bottom: 1px solid rgba(255,255,255,0);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transform: translateY(-36px);
-    transform-origin: top center;
-    pointer-events: none;
-    transition: max-height 1.35s cubic-bezier(0.22, 0.8, 0.24, 1),
-                opacity 1.0s ease,
-                transform 1.35s cubic-bezier(0.22, 0.8, 0.24, 1),
-                padding 1.1s ease,
-                border-color 0.35s ease;
-    will-change: max-height, transform, opacity;
-        }
-        #alarms-screen-layout.composer-open #alarm-create-panel {
-            max-height: 920px;
+        #alarm-create-panel {
+            position: fixed;
+            inset: 0;
+            z-index: 9500;
+            padding: 0;
+            background: rgba(3, 5, 10, 0.985);
             opacity: 1;
+            overflow-y: auto;
+            transform: translateY(-100%);
+            pointer-events: none;
+            transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+            box-shadow: none;
+            border: none;
+            border-radius: 0;
+            max-height: none;
+            width: 100%;
+        }
+        #body.alarm-composer-open #alarm-create-panel {
             transform: translateY(0);
             pointer-events: auto;
-            padding: 14px 14px 12px;
-            border-bottom-color: rgba(255,255,255,0.08);
         }
-
-        #alarm-create-panel .picker-container {
-            margin: 14px 0;
+        .alarm-create-page-shell {
+            max-width: min(100%, 585px);
+            min-height: 100%;
+            margin: 0 auto;
+            padding: calc(18px + env(safe-area-inset-top)) 0 calc(40px + env(safe-area-inset-bottom));
+            display: grid;
+            align-content: start;
+            gap: 0;
+        }
+        .alarm-sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 26px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .alarm-sheet-title {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            color: #fff;
+        }
+        .alarm-sheet-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 999px;
+            background: transparent;
+            color: rgba(255,255,255,0.88);
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .alarm-sheet-close:hover {
+            opacity: 1;
+            transform: scale(1.03);
+        }
+        .alarm-sheet-content {
+            padding: 26px 26px 34px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .alarm-sheet-field {
+            margin-bottom: 34px;
+        }
+        .alarm-sheet-field-label {
+            display: block;
+            margin-bottom: 14px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(163, 170, 186, 0.92);
+        }
+        .alarm-type-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .alarm-type-btn {
+            min-height: 104px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
+            color: rgba(160, 166, 180, 0.9);
+            font-size: 21px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease, transform 0.22s ease;
+        }
+        .alarm-type-btn:hover,
+        .alarm-type-btn.active {
+            transform: translateY(-1px);
+        }
+        .alarm-type-btn.active[data-type="regular"] {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(96, 165, 250, 0.72);
+            color: #7cc3ff;
+        }
+        .alarm-type-btn.active[data-type="routine"] {
+            background: rgba(245, 158, 11, 0.18);
+            border-color: rgba(251, 191, 36, 0.72);
+            color: #f7bf47;
+        }
+        .alarm-type-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .routine-limit-row {
+            display: none;
+            margin-bottom: 22px;
+        }
+        .routine-limit-row.visible {
+            display: block;
+        }
+        .routine-limit-options {
+            display: flex;
+            gap: 12px;
+        }
+        .routine-limit-btn {
+            flex: 1 1 0;
+            min-height: 52px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.56);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
+        }
+        .routine-limit-btn.active {
+            background: rgba(245, 158, 11, 0.18);
+            border-color: rgba(251, 191, 36, 0.72);
+            color: #f7bf47;
+        }
+        .alarm-sheet-picker {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 26px 22px;
+            border-radius: 30px;
+            background: linear-gradient(180deg, rgba(22, 24, 31, 0.92) 0%, rgba(18, 19, 26, 0.96) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .alarm-sheet-wheels {
+            flex: 1 1 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .alarm-picker-colon {
+            align-self: center;
+            font-size: 56px;
+            font-weight: 300;
+            color: rgba(110, 127, 161, 0.66);
+            transform: translateY(-4px);
+        }
+        .alarm-wheel-shell {
+            position: relative;
+            height: 436px;
+            overflow: hidden;
+        }
+        .alarm-wheel-shell::before,
+        .alarm-wheel-shell::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 112px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .alarm-wheel-shell::before {
+            top: 0;
+            background: linear-gradient(180deg, #121212 0%, rgba(18,18,18,0) 100%);
+        }
+        .alarm-wheel-shell::after {
+            bottom: 0;
+            background: linear-gradient(0deg, #121212 0%, rgba(18,18,18,0) 100%);
+        }
+        .alarm-wheel-highlight {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 92px;
+            transform: translateY(-50%);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            border-radius: 18px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .alarm-wheel {
+            height: 100%;
+            padding: 172px 0;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            touch-action: pan-y;
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            will-change: scroll-position;
+        }
+        .alarm-wheel::-webkit-scrollbar {
+            display: none;
+        }
+        .alarm-wheel .wheel-item {
+            height: 92px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 66px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.36);
+            transition: color 0.14s ease, transform 0.14s ease;
+            letter-spacing: -0.03em;
+        }
+        .alarm-wheel .wheel-item.active {
+            color: #fff;
+            transform: scale(1.02);
+        }
+        .alarm-period-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .alarm-period-btn {
+            min-width: 76px;
+            min-height: 80px;
+            padding: 0 18px;
+            border: none;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.45);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.22s ease, color 0.22s ease;
+        }
+        .alarm-period-btn.active {
+            background: rgba(59, 130, 246, 0.18);
+            color: #7cc3ff;
+        }
+        .alarm-day-grid {
+            display: flex;
+            width: 100%;
+            gap: 0;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .alarm-day-btn {
+            flex: 1 1 0;
+            min-width: 0;
+            min-height: 72px;
+            padding: 10px 8px;
+            border: none;
+            border-left: 1px solid rgba(255,255,255,0.18);
+            background: transparent;
+            color: rgba(255,255,255,0.56);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
+        }
+        .alarm-day-btn:first-child {
+            border-left: none;
+        }
+        .alarm-day-btn.active {
+            background: rgba(59, 130, 246, 0.18);
+            color: #7cc3ff;
+        }
+        #set-alarm-btn.alarm-sheet-save {
+            width: 100%;
+            min-height: 76px;
+            border: none;
+            border-radius: 24px;
+            background: #ffffff;
+            color: #000000;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            box-shadow: 0 16px 28px rgba(255,255,255,0.12);
+        }
+        #body.theme-light #alarm-create-panel,
+        #body.clear-background-mode #alarm-create-panel {
+            background: #090909 !important;
+        }
+        #body.alarm-composer-open {
+            overflow: hidden;
+        }
+        .alarm-composer-trigger-wrap .alarm-composer-btn.open {
+            transform: none;
+            background: rgba(9, 14, 20, 0.72);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 18px 44px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.06);
         }
 
         #alarms-screen-layout #alarm-list {
@@ -2838,7 +3123,7 @@
         </div>
     </div>
 
-    <div id="app-ui">
+        <div id="app-ui">
         <div id="app-top-toast" class="app-top-toast" role="status" aria-live="polite"></div>
         <div id="screen-wake" class="glass-card">
             <h2>Good Morning.</h2>
@@ -2977,40 +3262,69 @@
                 <!-- ===== ALARM LAYOUT (SINGLE SCROLL) START ===== -->
                 <div id="alarms-screen-layout">
                     <div id="alarm-create-panel">
-                        <div class="routine-limit-row">
-                            <span class="routine-limit-label">Max Routine Alarms:</span>
-                            <div class="routine-limit-options">
-                                <button class="routine-limit-btn" id="routine-limit-1" type="button" onclick="setRoutineAlarmLimit(1)">1</button>
-                                <button class="routine-limit-btn" id="routine-limit-2" type="button" onclick="setRoutineAlarmLimit(2)">2</button>
-                                <button class="routine-limit-btn" id="routine-limit-3" type="button" onclick="setRoutineAlarmLimit(3)">3</button>
+                        <div class="alarm-create-page-shell">
+                            <div class="alarm-sheet-header">
+                                <h3 class="alarm-sheet-title">Add Alarm</h3>
+                                <button type="button" class="alarm-sheet-close" aria-label="Close alarm creator" onclick="dismissAlarmComposer()">×</button>
+                            </div>
+                            <div class="alarm-sheet-content">
+                                <div class="alarm-sheet-field">
+                                    <span class="alarm-sheet-field-label">Alarm Type</span>
+                                    <div class="alarm-type-row">
+                                        <button class="alarm-type-btn active" data-type="regular" id="btn-regular" type="button" onclick="setAlarmType('regular')">Regular Alarm</button>
+                                        <button class="alarm-type-btn" data-type="routine" id="btn-routine" type="button" onclick="setAlarmType('routine')">Routine</button>
+                                    </div>
+                                </div>
+
+                                <div class="routine-limit-row" id="routine-limit-row">
+                                    <div style="width:100%;">
+                                        <span class="alarm-sheet-field-label">Max Routine Alarms</span>
+                                        <div class="routine-limit-options">
+                                            <button class="routine-limit-btn" id="routine-limit-1" type="button" onclick="setRoutineAlarmLimit(1)">1</button>
+                                            <button class="routine-limit-btn" id="routine-limit-2" type="button" onclick="setRoutineAlarmLimit(2)">2</button>
+                                            <button class="routine-limit-btn" id="routine-limit-3" type="button" onclick="setRoutineAlarmLimit(3)">3</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alarm-sheet-field">
+                                    <span class="alarm-sheet-field-label">Time</span>
+                                    <div class="alarm-sheet-picker">
+                                        <div class="alarm-sheet-wheels">
+                                            <div class="alarm-wheel-shell">
+                                                <div class="alarm-wheel-highlight" aria-hidden="true"></div>
+                                                <div class="wheel alarm-wheel" id="alarm-hour-wheel"></div>
+                                            </div>
+                                            <div class="alarm-picker-colon">:</div>
+                                            <div class="alarm-wheel-shell">
+                                                <div class="alarm-wheel-highlight" aria-hidden="true"></div>
+                                                <div class="wheel alarm-wheel" id="alarm-minute-wheel"></div>
+                                            </div>
+                                        </div>
+                                        <div class="alarm-period-stack" id="alarm-period-row">
+                                            <button type="button" class="alarm-period-btn" id="alarm-period-am" onclick="setCreatorPeriodSelection('AM')">AM</button>
+                                            <button type="button" class="alarm-period-btn" id="alarm-period-pm" onclick="setCreatorPeriodSelection('PM')">PM</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alarm-sheet-field">
+                                    <span class="alarm-sheet-field-label">Repeat</span>
+                                    <div class="alarm-day-grid" id="alarm-day-row">
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-all" onclick="setCreatorDaySelection('All')">All</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-mon" onclick="setCreatorDaySelection('Mon')">Mon</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-tue" onclick="setCreatorDaySelection('Tue')">Tue</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-wed" onclick="setCreatorDaySelection('Wed')">Wed</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-thu" onclick="setCreatorDaySelection('Thu')">Thu</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-fri" onclick="setCreatorDaySelection('Fri')">Fri</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-sat" onclick="setCreatorDaySelection('Sat')">Sat</button>
+                                        <button type="button" class="alarm-day-btn" id="alarm-day-sun" onclick="setCreatorDaySelection('Sun')">Sun</button>
+                                    </div>
+                                </div>
+
+                                <button id="set-alarm-btn" class="alarm-sheet-save" type="button" onclick="addAlarm()">Set New Alarm</button>
                             </div>
                         </div>
-                        <div style="margin-bottom: 20px; display: flex; gap: 12px;">
-                            <button class="alarm-type-btn" id="btn-routine" onclick="setAlarmType('routine')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,211,78,0.25); color: var(--sun-main); cursor: pointer; transition: all 0.3s; border-color: var(--sun-main);">Routine</button>
-                            <button class="alarm-type-btn" id="btn-regular" onclick="setAlarmType('regular')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: var(--text-primary); cursor: pointer; transition: all 0.3s;">Regular Alarm</button>
-                        </div>
-                        
-                        <div class="picker-container alarm-picker-horizontal">
-                            <div class="wheel wheel-horizontal" id="h-wheel"></div>
-                            <div class="wheel wheel-horizontal" id="m-wheel"></div>
-                        </div>
-                        <div class="alarm-picker-controls">
-                            <div class="alarm-picker-control-row" id="alarm-period-row">
-                                <button type="button" class="alarm-picker-btn" id="alarm-period-am" onclick="setCreatorPeriodSelection('AM')">AM</button>
-                                <button type="button" class="alarm-picker-btn" id="alarm-period-pm" onclick="setCreatorPeriodSelection('PM')">PM</button>
-                            </div>
-                            <div class="alarm-picker-control-row" id="alarm-day-row">
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-all" onclick="setCreatorDaySelection('All')">All</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-mon" onclick="setCreatorDaySelection('Mon')">Mon</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-tue" onclick="setCreatorDaySelection('Tue')">Tue</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-wed" onclick="setCreatorDaySelection('Wed')">Wed</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-thu" onclick="setCreatorDaySelection('Thu')">Thu</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-fri" onclick="setCreatorDaySelection('Fri')">Fri</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-sat" onclick="setCreatorDaySelection('Sat')">Sat</button>
-                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-sun" onclick="setCreatorDaySelection('Sun')">Sun</button>
-                            </div>
-                        </div>
-                        <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
                     </div>
                     <div id="alarm-list"></div>
                 </div>
@@ -3202,7 +3516,7 @@
         let alarmTypes = alarms.map(() => 'routine'); // default to routine
         let alarmSoundIds = alarms.map(() => DEFAULT_SOUND_ID); // per-alarm sound selection
         let alarmEnabled = alarms.map(() => true); // per-alarm on/off state
-        let selectedAlarmType = 'routine'; // currently selected type for new alarms
+        let selectedAlarmType = 'regular'; // currently selected type for new alarms
         let creatorDaySelection = EVERY_DAY_LABEL;
         let creatorPeriodSelection = 'AM';
         let maxRoutineAlarms = 1; // configurable max routine alarms (1..3)
@@ -3863,6 +4177,8 @@
             return _countRoutineAlarms(excludeIndex) < maxRoutineAlarms;
         }
         function _updateRoutineLimitControls() {
+            const row = document.getElementById('routine-limit-row');
+            if (row) row.classList.toggle('visible', selectedAlarmType === 'routine');
             [1, 2, 3].forEach(n => {
                 const btn = document.getElementById(`routine-limit-${n}`);
                 if (!btn) return;
@@ -4431,7 +4747,7 @@
         }
 
         function _refreshAllPickerWheels() {
-            const wheelIds = ['h-wheel', 'm-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
+            const wheelIds = ['alarm-hour-wheel', 'alarm-minute-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
             wheelIds.forEach(id => {
                 const wheel = document.getElementById(id);
                 if (!wheel || wheel.clientHeight <= 0 || wheel.offsetHeight <= 0) return;
@@ -4441,15 +4757,15 @@
 
         function initPickerWheels() {
             const wheels = {
-                h: document.getElementById('h-wheel'),
-                m: document.getElementById('m-wheel'),
+                alarmHour: document.getElementById('alarm-hour-wheel'),
+                alarmMinute: document.getElementById('alarm-minute-wheel'),
                 timerHour: document.getElementById('timer-hour-wheel'),
                 timerMin: document.getElementById('timer-min-wheel'),
                 timerSec: document.getElementById('timer-sec-wheel')
             };
 
-            _renderInfiniteWheel(wheels.h, Array.from({ length: 12 }, (_, i) => String(i + 1)));
-            _renderInfiniteWheel(wheels.m, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
+            _renderInfiniteWheel(wheels.alarmHour, Array.from({ length: 12 }, (_, i) => String(i + 1)));
+            _renderInfiniteWheel(wheels.alarmMinute, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
             _renderInfiniteWheel(wheels.timerHour, Array.from({ length: 24 }, (_, i) => String(i)));
             _renderInfiniteWheel(wheels.timerMin, Array.from({ length: 60 }, (_, i) => String(i)));
             _renderInfiniteWheel(wheels.timerSec, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
@@ -4462,7 +4778,7 @@
                     wheel.addEventListener('scroll', () => {
                         _maintainInfiniteWheelLoop(wheel);
                         _queueWheelVisualUpdate(wheel);
-                        if (_alarmComposerOpen && (wheel.id === 'h-wheel' || wheel.id === 'm-wheel')) {
+                        if (_alarmComposerOpen && (wheel.id === 'alarm-hour-wheel' || wheel.id === 'alarm-minute-wheel')) {
                             _syncHomeClockWithCreatorSelection();
                         }
                         clearTimeout(wheel._wheelIdleTimeout);
@@ -4472,8 +4788,8 @@
             });
 
             setTimeout(() => {
-                _scrollWheelToValue('h-wheel', '12');
-                _scrollWheelToValue('m-wheel', '00');
+                _scrollWheelToValue('alarm-hour-wheel', '12');
+                _scrollWheelToValue('alarm-minute-wheel', '00');
                 setCreatorDaySelection(EVERY_DAY_LABEL);
                 setCreatorPeriodSelection('AM');
                 _syncHomeClockWithCreatorSelection();
@@ -4494,7 +4810,7 @@
         }
 
         function attachScrollSnapping() {
-            const wheels = ['h-wheel', 'm-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
+            const wheels = ['alarm-hour-wheel', 'alarm-minute-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
             wheels.forEach(id => {
                 const w = document.getElementById(id);
                 if (w) handleWheelSnap(w);
@@ -4544,8 +4860,8 @@
 
         function _syncHomeClockWithCreatorSelection() {
             if (!_alarmComposerOpen) return;
-            const activeHourText = document.querySelector('#h-wheel .active')?.innerText;
-            const activeMinText = document.querySelector('#m-wheel .active')?.innerText;
+            const activeHourText = document.querySelector('#alarm-hour-wheel .active')?.innerText;
+            const activeMinText = document.querySelector('#alarm-minute-wheel .active')?.innerText;
             const displayHour = Math.max(1, Math.min(12, parseInt(String(activeHourText || '12'), 10) || 12));
             const minute = Math.max(0, Math.min(59, parseInt(String(activeMinText || '00'), 10) || 0));
             const period = creatorPeriodSelection === 'PM' ? 'PM' : 'AM';
@@ -5070,18 +5386,7 @@
 
         /* ===== ALARM LAYOUT (SINGLE SCROLL) START ===== */
         function _scrollAlarmPickerIntoView() {
-            if (!_alarmComposerOpen) {
-                setAlarmComposerOpen(true, { scrollIntoView: false });
-            }
-            const createPanel = document.getElementById('alarm-create-panel');
-            if (createPanel) {
-                createPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                return;
-            }
-            const wheelContainer = document.querySelector('#screen-post .picker-container');
-            if (wheelContainer) {
-                wheelContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if (!_alarmComposerOpen) setAlarmComposerOpen(true, { scrollIntoView: false });
         }
         /* ===== ALARM LAYOUT (SINGLE SCROLL) END ===== */
 
@@ -5091,21 +5396,28 @@
             const layout = document.getElementById('alarms-screen-layout');
             const trigger = document.getElementById('alarm-composer-btn');
             const triggerGlyph = document.getElementById('alarm-composer-glyph');
+            const body = document.getElementById('body');
             if (layout) layout.classList.toggle('composer-open', shouldOpen);
+            if (body) body.classList.toggle('alarm-composer-open', shouldOpen);
             if (shouldOpen) {
                 _setHomeClockPreviewAtMidnight();
-                _scrollWheelToValue('h-wheel', '12');
-                _scrollWheelToValue('m-wheel', '00');
+                _scrollWheelToValue('alarm-hour-wheel', '12');
+                _scrollWheelToValue('alarm-minute-wheel', '00');
                 setCreatorDaySelection(EVERY_DAY_LABEL);
                 setCreatorPeriodSelection('AM');
+                if (!Number.isInteger(editingAlarmIndex)) {
+                    setAlarmType('regular', { save: false });
+                    _updateAlarmEditActions();
+                }
                 _syncHomeClockWithCreatorSelection();
             } else {
                 _startHomeClockRealtime();
+                if (!Number.isInteger(editingAlarmIndex)) _updateAlarmEditActions();
             }
             if (trigger) {
                 trigger.classList.toggle('open', shouldOpen);
                 trigger.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-                if (triggerGlyph) triggerGlyph.textContent = shouldOpen ? '−' : '+';
+                if (triggerGlyph) triggerGlyph.textContent = '+';
                 trigger.setAttribute('aria-label', shouldOpen ? 'Collapse alarm creator' : 'Expand alarm creator');
                 trigger.setAttribute('title', shouldOpen ? 'Collapse alarm creator' : 'Expand alarm creator');
             }
@@ -5115,7 +5427,7 @@
         function toggleAlarmComposer() {
             const now = Date.now();
             if (now < _alarmComposerToggleCooldownUntil) return;
-            _alarmComposerToggleCooldownUntil = now + 4000;
+            _alarmComposerToggleCooldownUntil = now + 420;
             const trigger = document.getElementById('alarm-composer-btn');
             if (trigger) {
                 trigger.classList.add('cooldown');
@@ -5123,17 +5435,37 @@
                 _alarmComposerToggleCooldownTimer = setTimeout(() => {
                     trigger.classList.remove('cooldown');
                     _alarmComposerToggleCooldownTimer = null;
-                }, 4000);
+                }, 420);
             }
             setAlarmComposerOpen(!_alarmComposerOpen, { scrollIntoView: !_alarmComposerOpen });
         }
 
+        function dismissAlarmComposer() {
+            editingAlarmIndex = null;
+            originalAlarmDraft = null;
+            _closeRepeatPopover();
+            _updateAlarmEditActions();
+            setAlarmComposerOpen(false, { scrollIntoView: false });
+        }
+
+        document.addEventListener('keydown', (evt) => {
+            if (evt.key === 'Escape' && _alarmComposerOpen) dismissAlarmComposer();
+        });
+
+        document.addEventListener('click', (evt) => {
+            const panel = document.getElementById('alarm-create-panel');
+            if (!_alarmComposerOpen || !panel) return;
+            if (evt.target === panel) dismissAlarmComposer();
+        });
+
         function _updateAlarmEditActions() {
             const setBtn = document.getElementById('set-alarm-btn');
+            const title = document.querySelector('.alarm-sheet-title');
             const isEditing = Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
             if (setBtn) {
-                setBtn.textContent = isEditing ? 'Save Changes' : 'Set New Alarm';
+                setBtn.textContent = isEditing ? 'Save Alarm' : 'Set New Alarm';
             }
+            if (title) title.textContent = isEditing ? 'Edit Alarm' : 'Add Alarm';
             _syncAlarmCommitButtonLimitState();
         }
 
@@ -5158,8 +5490,8 @@
                 if (displayHour === 0) displayHour = 12;
                 const displayMinute = String(parsed.mm).padStart(2, '0');
                 const displayPeriod = parsed.hh >= 12 ? 'PM' : 'AM';
-                _scrollWheelToValue('h-wheel', String(displayHour));
-                _scrollWheelToValue('m-wheel', displayMinute);
+                _scrollWheelToValue('alarm-hour-wheel', String(displayHour));
+                _scrollWheelToValue('alarm-minute-wheel', displayMinute);
                 setCreatorPeriodSelection(displayPeriod);
             }
 
@@ -5196,8 +5528,8 @@
             if (restored) {
                 let displayHour = restored.hh % 12;
                 if (displayHour === 0) displayHour = 12;
-                _scrollWheelToValue('h-wheel', String(displayHour));
-                _scrollWheelToValue('m-wheel', String(restored.mm).padStart(2, '0'));
+                _scrollWheelToValue('alarm-hour-wheel', String(displayHour));
+                _scrollWheelToValue('alarm-minute-wheel', String(restored.mm).padStart(2, '0'));
                 setCreatorPeriodSelection(restored.hh >= 12 ? 'PM' : 'AM');
             }
             const restoredDays = _getRepeatDaysForAlarm(idx);
@@ -5810,27 +6142,8 @@
             if (btnRoutine && btnRegular) {
                 const routineDisabled = !routineAllowed && selectedAlarmType !== 'routine';
                 btnRoutine.disabled = routineDisabled;
-                btnRoutine.style.pointerEvents = routineDisabled ? 'none' : 'auto';
-                btnRoutine.style.cursor = routineDisabled ? 'not-allowed' : 'pointer';
-                if (type === 'routine') {
-                    btnRoutine.style.background = 'rgba(255,211,78,0.25)';
-                    btnRoutine.style.borderColor = 'var(--sun-main)';
-                    btnRoutine.style.color = 'var(--sun-main)';
-                    btnRegular.style.background = 'rgba(255,255,255,0.06)';
-                    btnRegular.style.borderColor = 'rgba(255,255,255,0.2)';
-                } else {
-                    if (routineDisabled) {
-                        btnRoutine.style.background = 'rgba(130,130,130,0.22)';
-                        btnRoutine.style.borderColor = 'rgba(130,130,130,0.4)';
-                        btnRoutine.style.color = '#b8bec6';
-                    } else {
-                        btnRoutine.style.background = 'rgba(255,211,78,0.15)';
-                        btnRoutine.style.borderColor = 'rgba(255,255,255,0.2)';
-                        btnRoutine.style.color = 'var(--sun-main)';
-                    }
-                    btnRegular.style.background = 'rgba(0,122,255,0.2)';
-                    btnRegular.style.borderColor = 'var(--accent-blue)';
-                }
+                btnRoutine.classList.toggle('active', type === 'routine');
+                btnRegular.classList.toggle('active', type === 'regular');
             }
             _updateRoutineLimitControls();
             if (opts.save !== false) saveState();
@@ -5848,8 +6161,8 @@
             }
 
             const now = Date.now();
-            const activeHourText = document.querySelector('#h-wheel .active')?.innerText;
-            const activeMinText = document.querySelector('#m-wheel .active')?.innerText;
+            const activeHourText = document.querySelector('#alarm-hour-wheel .active')?.innerText;
+            const activeMinText = document.querySelector('#alarm-minute-wheel .active')?.innerText;
             const activePeriodText = creatorPeriodSelection;
             const activeDayText = creatorDaySelection;
 
